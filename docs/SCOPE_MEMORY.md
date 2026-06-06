@@ -69,13 +69,18 @@ Risk for next block: —
 
 ---
 
-### Block 2 — Safety Gate · PENDING
-Built: —
-Worked: —
-Struggled: —
-Learned: —
-Deviated: —
-Risk for next block: —
+### Block 2 — Safety Gate (M1) · COMPLETE
+Built:
+- `lib/redFlags.ts` — `RED_FLAG_TERMS_EN` / `RED_FLAG_TERMS_ZH` (verbatim from SAFETY-GUARDRAILS.md Appendix A) + a `RED_FLAG_TERMS` map keyed by language for easy extension.
+- `lib/urgencyGate.ts` — pure synchronous `detectRedFlag(text): { hit; term? }`; checks both language lists regardless of selected language; lowercases EN input, substring-matches ZH. No model call.
+- `lib/emergencyCard.ts` — `buildEmergencyCard()` static bilingual card + exported `DISCLAIMER` literal (Appendix B).
+- `components/EmergencyCard.tsx` — full-screen red card, `tel:999` / `tel:111` one-tap, bilingual body + maternity-triage note + disclaimer; presentation-only, pure props (defaults to `buildEmergencyCard()`), no network/model.
+- Tests: `lib/urgencyGate.test.ts` (10 cases) + `lib/emergencyCard.test.ts` (3 cases). Added `vitest` (dev) + `"test": "vitest run"`.
+Worked: vitest ran on TS with zero config; the required acceptance cases (reduced fetal movement, severe headache + blurry vision, 胎动减少, mild back pain) all behave correctly. typecheck + lint clean.
+Struggled: nothing notable — Mandarin substring matching needs no normalization here because no red-flag term contains punctuation/whitespace.
+Learned: keep EN red-flag terms lowercase at the source so the gate only has to lowercase the input once; check EN list (lowercased) then ZH list (raw) for an O(n) deterministic pass.
+Deviated: none. PRD .docx absent; used SAFETY-GUARDRAILS.md Appendix A/B as the authority (term lists + card copy) as instructed. Card copy is drafted (headline/body/body_native EN+ZH + maternity note) consistent with Appendix B; no reassurance, ends with exact disclaimer.
+Risk for next block: M2 must call `detectRedFlag()` FIRST in `app/api/express/route.ts` before any GLM call; reuse `DISCLAIMER` literal from `lib/emergencyCard.ts` (or move to shared schema constant) so the Zod `disclaimer` literal stays identical.
 
 ---
 
