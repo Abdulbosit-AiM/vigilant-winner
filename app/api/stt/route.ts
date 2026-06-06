@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { geminiTranscribe } from "@/lib/gemini";
+import { rateLimit, getClientIp } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
 
@@ -10,6 +11,14 @@ export const runtime = "nodejs";
  * transcribe, type instead". User audio is never logged.
  */
 export async function POST(req: Request): Promise<NextResponse> {
+  const rl = rateLimit(getClientIp(req));
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: "Too many requests. Please wait a moment and try again.", retryAfter: rl.retryAfter },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfter) } },
+    );
+  }
+
   const body = (await req.json().catch(() => null)) as
     | { audioBase64?: unknown; mimeType?: unknown }
     | null;

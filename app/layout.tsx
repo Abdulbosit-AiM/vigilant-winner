@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import DeviceFrame from "@/components/DeviceFrame";
 
 export const metadata: Metadata = {
   title: "Maternify",
@@ -20,7 +21,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="min-h-screen text-slate-900">{children}</body>
+      <body className="min-h-screen text-slate-900">
+        <DeviceFrame>{children}</DeviceFrame>
+      </body>
     </html>
   );
 }

@@ -1,0 +1,11 @@
+{
+  "kind": "guidance",
+  "urgency": "today",
+  "urgency_label": "今天联系您的助产士团队",
+  "explanation_native": "您提到从昨天开始，宝宝今天的胎动比平时少。在怀孕约34周时，胎动减少需要在当天进行检查，不要等到下一次预约。请尽快联系您的助产士团队或产科分诊，让他们检查宝宝的情况。带上您的产检记录，并留意之后胎动是否再次减少。",
+  "explanation_source": "Tommy's — Your baby's movements",
+  "english_script": "Hello. I am 34 weeks pregnant. Since yesterday, I have noticed my baby is moving less than usual. I would like to be checked today. Please can you tell me where I should go.",
+  "contact_type": "midwife_team",
+  "contact_label": "Contact your midwife team",
+  "disclaimer": "This is not medical advice. Always confirm with your midwife or doctor."
+}

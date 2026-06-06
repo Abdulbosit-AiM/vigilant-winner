@@ -1,0 +1,18 @@
+{
+  "kind": "interpretation",
+  "document_type": "First-trimester combined screening result (Down's, Edwards' and Patau's syndromes)",
+  "explanation_native": "这封信是您在孕早期接受的联合筛查结果。结果显示宝宝患唐氏综合征的几率为「85分之1」。这是一个筛查结果，不是诊断——它表示在85位有相同结果的孕妇中，预计有1位宝宝患有唐氏综合征，其余84位没有。NHS 将「150分之1」或更高的几率（例如1/85）归类为「较高几率（higher chance）」结果，这意味着会有助产士或筛查团队联系您，向您说明可以选择的进一步检查。这封信本身并不能告诉您宝宝是否真的患病。",
+  "explanation_en": "This letter is your first-trimester combined screening result. It shows a 1 in 85 chance of Down's syndrome. This is a screening result, not a diagnosis: out of 85 women with the same result, 1 baby is expected to have Down's syndrome and 84 are not. The NHS calls a result of 1 in 150 or higher (such as 1 in 85) a 'higher chance' result, and a midwife or screening team will contact you to explain the further tests you can choose.",
+  "explanation_source": "NHS — Screening for Down's, Edwards' and Patau's syndromes",
+  "next_steps": [
+    "等待 NHS 筛查团队联系您（通常在收到这类结果后的几个工作日内），与您讨论进一步检查的选择。",
+    "了解可以选择的进一步检查，例如 NIPT（无创产前检测）或诊断性检查（绒毛取样或羊膜穿刺）——筛查团队会向您解释每种检查的内容。",
+    "把这封信带到下一次预约，并写下您想问的问题。"
+  ],
+  "questions_en": [
+    "Can you explain what a '1 in 85' chance means for my baby?",
+    "What are my options for further testing, and what does each one involve?",
+    "Are there any risks to the baby from the further tests, and how long do the results take?"
+  ],
+  "disclaimer": "This is not medical advice. Always confirm with your midwife or doctor."
+}

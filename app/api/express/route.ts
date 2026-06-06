@@ -5,6 +5,9 @@ import { retrieveContext, type RetrievedChunk } from "@/lib/rag";
 import { generateJson } from "@/lib/generate";
 import { mapContact } from "@/lib/contact";
 import { writeEvent } from "@/lib/db";
+import { DEMO_SAFE_MODE } from "@/lib/env";
+import { loadExpressFixture } from "@/lib/demoFixtures";
+import { rateLimit, getClientIp } from "@/lib/rateLimit";
 import { EXPRESS_SYSTEM_PROMPT } from "@/lib/prompts";
 import {
   ExpressModelSchema,
@@ -50,7 +53,34 @@ function fallback(message: string): ExpressResponse {
   };
 }
 
+/**
+ * Serve the saved, labelled example (PRD §11.8) instead of a bare fallback when
+ * DEMO_SAFE_MODE is on or a live call fails. The fixture is validated against
+ * ExpressOutputSchema — never trusted as raw content — and flagged `offline:true`
+ * so the UI shows an "Example (offline)" label. Degrades to the safe fallback if
+ * the fixture is missing or invalid.
+ */
+async function serveExpressFixture(): Promise<NextResponse> {
+  const fixture = await loadExpressFixture();
+  const parsed = ExpressOutputSchema.safeParse(fixture);
+  if (parsed.success) {
+    return NextResponse.json({ ...parsed.data, offline: true }, { status: 200 });
+  }
+  return NextResponse.json(
+    fallback("We couldn't prepare this safely right now. Please contact your midwife team."),
+    { status: 200 },
+  );
+}
+
 export async function POST(req: Request): Promise<NextResponse> {
+  const rl = rateLimit(getClientIp(req));
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: "Too many requests. Please wait a moment and try again.", retryAfter: rl.retryAfter },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfter) } },
+    );
+  }
+
   const body = (await req.json().catch(() => null)) as
     | { text?: unknown; lang?: unknown; source?: unknown }
     | null;
@@ -63,6 +93,7 @@ export async function POST(req: Request): Promise<NextResponse> {
   }
 
   // 1) Red-flag gate FIRST — no model call on a hit (PRD §3 / §11.2).
+  //    The gate is ALWAYS real; it is never served from a fixture.
   const flag = detectRedFlag(text);
   const lang = resolveLang(body?.lang, text);
 
@@ -78,7 +109,13 @@ export async function POST(req: Request): Promise<NextResponse> {
     return NextResponse.json(response, { status: 200 });
   }
 
-  // 2) Non-urgent → RAG → generate (GLM→Gemini) → validate.
+  // 2) DEMO_SAFE_MODE → serve the labelled example without a live call (§11.8).
+  if (DEMO_SAFE_MODE) {
+    void writeEvent({ kind: "express", lang });
+    return serveExpressFixture();
+  }
+
+  // 3) Non-urgent → RAG → generate (GLM→Gemini) → validate.
   const sources = await retrieveContext(text);
   const { json, source } = await generateJson({
     system: EXPRESS_SYSTEM_PROMPT,
@@ -88,15 +125,10 @@ export async function POST(req: Request): Promise<NextResponse> {
   const parsed = ExpressModelSchema.safeParse(json);
   if (source === "none" || !parsed.success) {
     void writeEvent({ kind: "express", lang });
-    return NextResponse.json(
-      fallback(
-        "We couldn't prepare this safely right now. Please contact your midwife team.",
-      ),
-      { status: 200 },
-    );
+    return serveExpressFixture();
   }
 
-  // 3) Deterministic contact mapping (PRD §11.4) + disclaimer literal.
+  // 4) Deterministic contact mapping (PRD §11.4) + disclaimer literal.
   const contact = mapContact(parsed.data.urgency);
   const assembled = ExpressOutputSchema.safeParse({
     kind: "guidance",
@@ -107,12 +139,7 @@ export async function POST(req: Request): Promise<NextResponse> {
 
   if (!assembled.success) {
     void writeEvent({ kind: "express", lang });
-    return NextResponse.json(
-      fallback(
-        "We couldn't prepare this safely right now. Please contact your midwife team.",
-      ),
-      { status: 200 },
-    );
+    return serveExpressFixture();
   }
 
   void writeEvent({ kind: "express", urgency: assembled.data.urgency, lang });

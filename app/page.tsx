@@ -25,7 +25,7 @@ export default function Home() {
           className={`flex-1 px-4 py-2 ${flow === "express" ? "bg-slate-900 text-white" : "text-slate-600"}`}
           aria-pressed={flow === "express"}
         >
-          Express
+          Express<span className="ml-1 font-normal opacity-80">表达</span>
         </button>
         <button
           type="button"
@@ -33,7 +33,7 @@ export default function Home() {
           className={`flex-1 px-4 py-2 ${flow === "interpret" ? "bg-slate-900 text-white" : "text-slate-600"}`}
           aria-pressed={flow === "interpret"}
         >
-          Interpret
+          Interpret<span className="ml-1 font-normal opacity-80">解读</span>
         </button>
       </div>
 
