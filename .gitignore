@@ -1,0 +1,16 @@
+# OS
+.DS_Store
+
+# Secrets — only .env.example is committed (CLAUDE.md §9)
+.env
+.env.*
+!.env.example
+
+# Node / Next.js (Phase 2+)
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+
+# Logs
+*.log
