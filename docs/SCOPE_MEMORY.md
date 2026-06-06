@@ -113,13 +113,21 @@ Risk for next block: Gemini free-tier 20-req/day cap will block live demos — M
 
 ---
 
-### Block 5 — TTS Playback · PENDING
-Built: —
-Worked: —
-Struggled: —
-Learned: —
-Deviated: —
-Risk for next block: —
+### Block 5 — Voice: TTS playback + STT (M4) · COMPLETE
+Built:
+- `lib/wav.ts` — `parsePcmRate(mimeType)`, `pcmBufferToWav(pcm, rate, ch, bits)`, `pcmToWav(base64Pcm, …)`. Wraps Gemini TTS RAW PCM (`audio/L16;codec=pcm;rate=24000`, s16le mono 24kHz) in a 44-byte WAV/RIFF header so a browser `<audio>` can play it. Server-side (Node Buffer).
+- `lib/wav.test.ts` — 6 unit tests: RIFF/WAVE/fmt /data tags, byte length = 44 + dataLen, RIFF chunk size, PCM format fields (format=1, mono, rate, bits=16, byteRate, blockAlign), non-default rate, and `parsePcmRate` extraction/fallback.
+- `app/api/tts/route.ts` (`runtime="nodejs"`) — POST `{text, voice?}` → `geminiTts` → `pcmToWav` (rate from mimeType) → JSON `{audioBase64Wav, mimeType:"audio/wav"}`. On mocked/empty → 503 `{mocked:true}` so the client falls back to the demo clip. Returns base64 (not a stream) for serverless reliability.
+- `app/api/stt/route.ts` (`runtime="nodejs"`) — POST `{audioBase64, mimeType}` → `geminiTranscribe` → `{text}`; on mocked/empty (incl. 429 quota) → 503 `{error, mocked:true}`. User audio never logged.
+- `lib/audioClient.ts` — browser-only: `blobToWavBase64(blob)` decodes a MediaRecorder blob (webm/opus) via `AudioContext.decodeAudioData` and re-encodes to mono s16le WAV base64 (`audioBufferToWavBase64`) with chunked btoa. Avoids server-side ffmpeg and the webm-opus-not-accepted problem.
+- `components/ExpressFlow.tsx` (additive) — Play button on the english_script card: POST `/api/tts` → play `data:audio/wav;base64,…` via `Audio`; on any failure falls back to `/demo/express-script.wav` and shows an "Example audio (offline)" label. Mic control under the textarea (gated behind a `navigator.mediaDevices` + `MediaRecorder` feature check set in `useEffect`): records → client-side WAV → `/api/stt` → transcript populates the input; on failure shows "Couldn't transcribe — please type instead." M0–M3 behaviour untouched.
+- `scripts/gen-demo-audio.ts` — one-off: loads `.env.local`, calls live Gemini TTS once for the demo script, writes `data/demo/express-script.wav` (canonical) + `data/demo/express-script.txt` + `public/demo/express-script.wav` (browser-served fallback).
+- Demo assets: `data/demo/express-script.{wav,txt}` + `public/demo/express-script.wav` (584,250-byte WAV, 24kHz, real Gemini TTS of the 34-week reduced-movement script).
+Worked: Gemini TTS is live (separate quota) — `/api/tts` curl returned HTTP 200, valid `RIFF….WAVE`, sampleRate 24000, 202,170 bytes (= 44 + 202,126 data). `pcmToWav` unit tests pin the header math. typecheck + lint clean; vitest 40/40 (was 34, +6 wav). Demo WAV generated and header-verified (RIFF/WAVE).
+Struggled: (1) `<audio>` cannot play Gemini's raw PCM — must wrap in WAV first (the whole reason for `lib/wav.ts`). (2) STT shares the `gemini-2.5-flash` quota with text generation, which is exhausted today → `/api/stt` curl returned the expected graceful 503 (`mocked:true`); STT NOT proven live, but the failure path is verified and the UI degrades to "type instead". (3) Dev-server lifecycle: detached `nohup`/`&` processes die when the shell call returns and `kill` is blocked inside the sandbox; the reliable pattern is to launch `npm run dev` as a persistent background shell job (block_until_ms:0) and curl from a separate call, killing via a `["all"]`-permission shell. A stale `.next` + crashed watchpack (EMFILE) once caused new routes to 404 — `rm -rf .next` + fresh start fixed it.
+Learned: for serverless audio, return base64 JSON, never a stream. Parse the sample rate from the mimeType (`rate=…`) rather than hardcoding, so a future TTS rate change still produces a correct WAV. Encode WAV on the CLIENT (decodeAudioData → s16le) to dodge webm/opus rejection without ffmpeg. Pre-record the demo clip AND serve it from `/public` so the Play moment is decoupled from any live call. Never log the transcribed text or audio (medical privacy).
+Deviated: demo WAV is saved under `data/demo/` as instructed AND mirrored to `public/demo/express-script.wav` so the browser can fetch it as the Play fallback (Next only serves static files from `/public`). Added `scripts/gen-demo-audio.ts` (reproducible regeneration) — not requested but small and additive.
+Risk for next block: the same `gemini-2.5-flash` daily cap blocks live STT (and Express/Interpret generation) in the demo → M6 DEMO_SAFE_MODE fixtures (`/data/demo/{redflag,express,interpret}.json`) + the offline-label discipline are still needed. The pre-recorded TTS clip and the `usedDemoAudio` "Example (offline)" label already cover the Play moment. `public/demo/express-script.wav` must be committed for the deployed fallback to work.
 
 ---
 
