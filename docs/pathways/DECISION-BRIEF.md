@@ -4,6 +4,13 @@
 > Working spec: [`4-maternity.md`](4-maternity.md) — now the top source of truth
 > (`CLAUDE.md` §11). The three unchosen pathway stubs have been removed; their
 > tools are dropped from `docs/TOOLS.md`.
+>
+> **Product-cut update (6 June 2026, same day):** the pathway is unchanged, but the
+> *product cut* was reconciled to the **Maternify PRD v0.2** — from an advocacy-
+> coaching + Supabase-history app to the **Express (English script + TTS) /
+> Interpret (NHS-letter decoder)** product on an in-memory-RAG + Zod stack. The
+> "why maternity won" reasoning below still holds; the mechanic and stack changed.
+> See [`RECONCILE-2026-06-06.md`](../RECONCILE-2026-06-06.md).
 
 ## Why maternity won
 

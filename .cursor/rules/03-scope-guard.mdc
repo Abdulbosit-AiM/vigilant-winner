@@ -1,0 +1,88 @@
+---
+description: Scope enforcement and self-learning trigger. Blocks out-of-scope work and enforces SCOPE_MEMORY updates. Always active.
+alwaysApply: true
+---
+
+# Scope Guard + Self-Learning
+
+## Scope Enforcement
+
+### In Scope (hackathon — locked)
+Express text input · Interpret text paste · Urgency signal · English script · TTS playback ·
+Mandarin → English only · Red-flag emergency card · RAG over 12 sources · Single-page web app · No login
+
+### Hard rejections (refuse and explain why)
+| Request | Rejection reason |
+|---------|-----------------|
+| Voice / STT input | Out of scope. Web Speech API multilingual unreliable. Demo risk. |
+| OCR / photo upload | Out of scope. Separate problem. |
+| Cantonese support | Out of scope. Mandarin only for hackathon. |
+| User accounts / auth | Out of scope. Privacy complexity. |
+| Diagnosis output | Violates Safety Rule 1. Architectural breach. |
+| "It's probably fine" output | Violates Safety Rule 2. Must rewrite. |
+| External vector DB (Pinecone, etc.) | Out of scope. In-memory only. |
+| Analytics / tracking | Requires consent banner. Out of scope for hackathon. |
+| Any feature not in docs/pathways/4-maternity.md §3 | Rejected. Update PRD first if genuinely needed. |
+
+When rejecting: state the rule, state the PRD section, offer the in-scope alternative.
+
+---
+
+## Self-Learning: docs/SCOPE_MEMORY.md Protocol
+
+`docs/SCOPE_MEMORY.md` is a living document. It is the agent's persistent memory across phases.
+
+### When to update
+- After completing every BUILD_CHECKLIST block
+- After fixing any non-trivial bug
+- After any deviation from the PRD
+
+### How to update
+Append a new entry at the bottom of the relevant block section. Never delete old entries.
+Format:
+
+```markdown
+### Block [N] — [Name] · [COMPLETE / IN PROGRESS / BLOCKED]
+**Built:** [files created or edited]
+**Worked:** [what went smoothly — be specific]
+**Struggled:** [what took longer than expected or needed rework]
+**Learned:** [one concrete rule to carry into next block]
+**Deviated:** [any departure from docs/pathways/4-maternity.md — if none, write "none"]
+**Risk for next block:** [what might bite the next block]
+```
+
+### How to read
+Before starting a new block:
+1. Read the last 3 entries in docs/SCOPE_MEMORY.md
+2. Apply the "Learned" rules from those entries to the current block
+3. Check "Risk for next block" from the previous entry — address it first
+
+---
+
+## Architectural Memory Rules
+
+These rules are learned from common failure patterns. Apply them in every block:
+
+| Rule | Why |
+|------|-----|
+| Write the Zod schema before writing the Claude prompt | The prompt must produce a shape the schema can parse. Reverse order causes rework. |
+| Test `urgencyGate()` with Mandarin strings before wiring Express route | Chinese character matching has edge cases (full-width punctuation, simplified vs traditional). |
+| Chunk RAG content to ~400 tokens at index time | Larger chunks hurt retrieval precision; smaller chunks lose context. |
+| Never stream Claude output to the client raw | Stream to server-side buffer → validate with Zod → send structured JSON. |
+| TTS endpoint must stream audio, not buffer it | Buffering causes > 1s delay. Use `Response` with `ReadableStream`. |
+| Keep prompts in `/lib/prompts.ts` and import them | Inline prompts in route handlers make testing and review impossible. |
+
+---
+
+## Cursor Model Guidance
+
+Use Claude models (configured in Cursor model selector) for all generation tasks in this project.
+This keeps the Cursor development context consistent with the production Anthropic API stack.
+
+For Cursor chat / composer tasks:
+- **Architecture decisions, review, debugging** → use the most capable model available (Opus / Sonnet)
+- **Quick edits, boilerplate, type fixes** → use a faster model (Haiku / Flash equivalent)
+
+> Note: If team wants to use "GLM 5.1" — confirm exact model ID and add as custom API provider in
+> Cursor Settings → Models → Add Model. For Mandarin-heavy tasks, a Chinese-language-optimised
+> model may improve explanation quality. Route Mandarin generation through that model if available.

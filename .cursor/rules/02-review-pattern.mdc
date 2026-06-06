@@ -1,0 +1,121 @@
+---
+description: Review-before-build protocol. Enforced before every implementation step. Always active.
+alwaysApply: true
+---
+
+# Review-Before-Build Protocol
+
+Every implementation request triggers this protocol. No exceptions. No skipping.
+
+---
+
+## The Loop (run every time before writing code)
+
+### Step 1 — SITUATE
+Read and state the current state:
+- Which docs/BUILD-CHECKLIST.md block are we in?
+- What was completed in the previous block (per docs/SCOPE_MEMORY.md)?
+- Which files exist and are relevant to the current task?
+
+Always read relevant files before touching them. Never edit from memory.
+
+### Step 2 — REVIEW
+Inspect existing code for:
+- TypeScript errors or `any` types
+- Zod schema mismatches between route output and client expectations
+- System prompt leaking user input (prompt injection risk)
+- `urgencyGate()` not being called first in Express route
+- LLM output bypassing Zod validation
+- Hardcoded values that should be in `/lib/redFlags.ts` or `/lib/prompts.ts`
+- Any feature present that is NOT in docs/pathways/4-maternity.md §3 In Scope
+
+State findings explicitly before writing any code:
+```
+REVIEW FINDINGS:
+- [issue or "none found"]
+```
+
+### Step 3 — FIX FIRST
+If review found issues: fix them before building new code. Do not layer new code on broken foundations.
+
+State what was fixed:
+```
+FIXES APPLIED:
+- [fix or "none needed"]
+```
+
+### Step 4 — PLAN
+Before writing implementation, state:
+- Exact files to create or edit
+- Exact functions/components to add
+- Exact tests to write
+- Expected output shape (Zod schema)
+
+```
+PLAN:
+- Create: [file]
+- Edit: [file]
+- Test: [what to verify]
+```
+
+### Step 5 — BUILD
+Implement the plan. No feature additions beyond what was stated in the plan.
+
+### Step 6 — VERIFY
+After implementation:
+- State: does `npm run build` pass? (run it if uncertain)
+- State: does `npm run lint` pass?
+- State: do the unit tests pass?
+- State: does the output match the Zod schema?
+- State: is there any scope creep vs docs/pathways/4-maternity.md?
+
+```
+VERIFY:
+- Build: [pass/fail]
+- Lint: [pass/fail]
+- Tests: [pass/fail/count]
+- Schema: [valid/invalid]
+- Scope: [clean/creep found — describe]
+```
+
+### Step 7 — UPDATE SCOPE_MEMORY
+After each BUILD_CHECKLIST block completes, update `docs/SCOPE_MEMORY.md`:
+- Mark block as complete
+- Record what was built (files created/edited)
+- Record one or two learnings (what worked, what didn't, what to do differently)
+- Record any deviations from docs/pathways/4-maternity.md and why
+- Record any open risks for the next block
+
+---
+
+## Latency Contracts (verify before marking a block done)
+
+| Endpoint | Contract | How to test |
+|----------|----------|-------------|
+| Red-flag detection | < 500ms | `Date.now()` before/after `detectRedFlag()` |
+| `/api/express` (non-urgent) | < 8s end-to-end | Browser network tab |
+| `/api/interpret` | < 10s end-to-end | Browser network tab |
+| TTS start | < 1s after text ready | Browser network tab |
+
+If a contract is missed: investigate and fix before moving on. Do not accept slow paths.
+
+---
+
+## The Three Questions (ask before every PR / block completion)
+
+1. **Does this output anything that could be interpreted as a diagnosis?** If yes: rewrite.
+2. **Does every LLM output pass through a Zod schema before reaching the client?** If no: fix.
+3. **Is `urgencyGate()` the first thing called in the Express route?** If no: fix.
+
+---
+
+## What "done" means for a block
+
+A block is done when:
+- All checklist items are checked
+- Build passes, lint passes, tests pass
+- Latency contracts are met
+- docs/SCOPE_MEMORY.md is updated
+- No scope creep introduced
+
+A block is NOT done because it "looks right" or "mostly works."

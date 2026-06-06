@@ -1,0 +1,68 @@
+---
+description: Maternify core project context — stack, file structure, naming, API constraints. Always active.
+alwaysApply: true
+---
+
+# Maternify — Project Context
+
+## What this product is
+Multilingual communication tool for minority ethnic pregnant women in the UK.
+Two flows: **Express** (symptom → English clinical script + TTS) and **Interpret** (NHS letter → plain-language explanation).
+NOT a diagnostic tool. NOT a replacement for clinicians. Communication bridge only.
+
+## Stack (locked — do not deviate)
+- Next.js 14 App Router + TypeScript (strict mode)
+- Anthropic Claude Sonnet (`claude-sonnet-4-6`) for generation
+- Anthropic Claude Haiku (`claude-haiku-4-5-20251001`) for RAG summarisation
+- `text-embedding-3-small` (OpenAI) for embeddings
+- In-memory vector store (no external DB)
+- OpenAI TTS API for audio
+- Zod for all schema validation
+- Tailwind CSS for styling
+- Vercel for deploy
+
+## File structure
+```
+/app
+  /api
+    /express/route.ts     ← Express flow endpoint
+    /interpret/route.ts   ← Interpret flow endpoint
+    /tts/route.ts         ← TTS audio endpoint
+  /page.tsx               ← Single-page app
+/lib
+  /redFlags.ts            ← Hardcoded red-flag list (EN + Mandarin)
+  /urgencyGate.ts         ← detectRedFlag() pure function
+  /rag.ts                 ← retrieveContext() + in-memory store
+  /schemas.ts             ← All Zod output schemas
+  /prompts.ts             ← All system prompts (no inline prompts in routes)
+/components
+  /ExpressFlow.tsx
+  /InterpretFlow.tsx
+  /EmergencyCard.tsx      ← Static, no LLM, full-screen
+  /UrgencyBadge.tsx
+  /AudioPlayer.tsx
+/data
+  /corpus/                ← Pre-fetched NHS/Tommy's text chunks
+```
+
+## Naming conventions
+- Files: kebab-case
+- Components: PascalCase
+- Functions: camelCase
+- Constants: SCREAMING_SNAKE_CASE
+- Zod schemas: PascalCase + `Schema` suffix (e.g. `ExpressOutputSchema`)
+- API route files: always `route.ts` in App Router
+
+## Hard constraints (non-negotiable)
+1. All system prompts live in `/lib/prompts.ts` — never inline in route handlers
+2. All LLM output passes through Zod schema before returning to client — no exceptions
+3. `urgencyGate()` runs BEFORE any LLM call in the Express route — no exceptions
+4. No `console.log(userInput)` anywhere — user input is never logged
+5. API keys only in `.env.local` — never in source code
+6. `dangerouslySetInnerHTML` is banned — React escaping only
+7. User input passed as `role: 'user'` only — never interpolated into system prompt string
+
+## Languages
+- Input: Mandarin (Simplified) + English
+- Output: Mandarin explanation + English script
+- Red-flag detection runs on BOTH language inputs before any LLM call

@@ -17,21 +17,35 @@ this file in the same change.
 
 **Pathway: LOCKED — Safer Maternity Care** (chosen 6 June 2026; decision record in
 `docs/pathways/DECISION-BRIEF.md`). Working spec: **`docs/pathways/4-maternity.md`**
-— that file is now the top source of truth (Section 11).
+— that file is now the top source of truth (Section 11). The product is **Maternify**
+(name locked for pitch).
 
-Support high-risk & under-heard mothers in accessing care. MBRRACE-UK shows Black
-women are ~2.3–3× more likely to die in pregnancy/childbirth than White women, with
-no improvement in the disparity — driven by communication failures and women not
-feeling heard.
+**Maternify** is a multilingual communication tool for minority-ethnic pregnant
+women in the UK. It bridges the gap between what a woman can *say* and what her
+clinician needs to *hear* — without diagnosing, replacing clinicians, or acting as
+a professional interpreter. The evidence is stark: **MBRRACE-UK found 96% of
+reviewed cases had a documented need for an interpreter, and only 27% had a
+professional one** — language and communication failure is a documented cause of
+preventable maternal death. The same data shows Black women are ~2.3–3× more likely
+to die in pregnancy/childbirth than White women, with no improvement in the
+disparity. (Stats to re-verify before pitch — `docs/pathways/4-maternity.md` §0.)
 
-**Product promise:** "Understand what's worth raising, how to be heard, and when to
-act — with you at every appointment."
-**Target user (one):** A pregnant woman from an ethnic-minority background who feels
-dismissed at appointments, unsure which symptoms are serious or how to make her
-concerns land.
-**Central AI capability (one):** Turn a worry into plain-language context plus
-clear, assertive, safe questions for her midwife/GP — with reliable pregnancy
-red-flag escalation. **Advocacy, not diagnosis.**
+**Product promise / one-line pitch:** "ChatGPT gives information. **Maternify gives
+her a voice.**"
+**Target user (one):** **Maya** — 26–38, pregnant or postpartum, born outside the
+UK, living in England. Mother tongue Mandarin (Simplified) for the hackathon build;
+functional everyday English but not confident in clinical settings under pressure.
+She leaves appointments not understanding what was said, receives NHS letters she
+cannot decode, and can't describe symptoms accurately in English when something
+feels wrong.
+**Central AI capability (two flows):**
+- **Express** — symptom → urgency signal → a clinically-grounded **English script
+  she can speak or *play* to her midwife** (TTS) → who to contact.
+- **Interpret** — paste an NHS letter → plain-language explanation + next steps +
+  questions to ask.
+
+Not translation. Not information. **A voice. Advocacy and communication, never
+diagnosis.**
 
 ---
 
@@ -81,95 +95,140 @@ to this codebase. Two agents, clear lanes, one code owner at a time.
 
 ## 4. Build loop — 24-hour phases
 
-Condensed from `../hackathon/HACKATHON_PLAYBOOK.md`. Load a capability only when
-its phase starts.
+Condensed from `../hackathon/HACKATHON_PLAYBOOK.md`. The hour-by-hour, block-gated
+version is `docs/BUILD-CHECKLIST.md` — and **every build block runs the
+review-before-build loop and updates `docs/SCOPE_MEMORY.md`** (read its last 3
+entries before starting a block). Load a capability only when its phase starts.
 
 | Phase | Time | Owner | Output |
 | --- | --- | --- | --- |
-| 0 Setup | 30m | Human + impl | Repo runs, stack confirmed, **pathway chosen** |
-| 1 Product cut | 60m | Claude | Promise, 1 user, 1 demo flow, 3 acceptance criteria, 1 AI capability |
-| 2 Technical plan | 45m | Impl | Stack, data shape, AI provider, deploy path, risk list |
-| 3 Build sprint 1 | 4h | Impl | Thinnest end-to-end path works locally (AI may be mocked) |
-| 4 Build sprint 2 | 6h | Impl | Differentiation: UX, personalisation, history, a confidence signal |
-| 5 Hardening | 4h | Impl + Claude | Build/lint pass, smoke test, **security & privacy review**, fresh-terminal start |
-| 6 Demo | 2h | Claude + impl | 90s script, seed data, backup screenshots, failure states handled |
+| 0 Setup | 30m | Human + impl | Repo runs, stack confirmed, **pathway chosen**, stats verified (§0 of spec) |
+| 1 Product cut | 60m | Claude | Promise, persona (Maya), 2 flows, acceptance criteria, AI capability |
+| 2 Technical plan | 45m | Impl | Stack, Zod schemas, RAG index plan, deploy path, risk list |
+| 3 Build sprint 1 | 4h | Impl | **Safety gate first** (red-flag bypass + tests), then RAG, then Express end-to-end (AI may be mocked) |
+| 4 Build sprint 2 | 6h | Impl | TTS playback, Interpret flow, Mandarin QA, urgency UI |
+| 5 Hardening | 4h | Impl + Claude | Build/lint pass, **security & privacy review**, Zod-leak check, fresh-terminal start |
+| 6 Demo | 2h | Claude + impl | 90s script, pre-loaded inputs, backup recording, failure states handled |
 
-**Hard rule:** Any feature that cannot improve the live demo waits.
+**Hard rule:** Any feature that cannot improve the live demo waits. Build order is
+non-negotiable: **the red-flag safety gate ships before anything else depends on it.**
 
 ---
 
 ## 5. Tech stack (decided)
 
-- **Frontend/app:** Next.js (App Router) + TypeScript + Tailwind.
-- **Backend/data/auth:** Supabase (Postgres + Auth + RLS). MCP available — see Section 8.
-- **AI:** Anthropic Claude API as primary. Wrap every call so it can fall back to a
-  saved example if credentials/network fail mid-demo (Section 7, mocking rule).
-- **Deploy:** Vercel (frontend) or Cloudflare Workers if we go edge. Pick in Phase 2.
+Chosen for speed-to-ship, not long-term scale. Full spec: `docs/TECH-STACK.md`.
+
+- **Frontend/app:** Next.js 14 (App Router) + TypeScript (strict) + Tailwind.
+  Single-page, mobile-first, **no login**. API routes = no separate backend.
+- **AI — generation:** Anthropic **Claude Sonnet** (`claude-sonnet-4-6`) for Express
+  generation; **Claude Haiku** (`claude-haiku-4-5-20251001`) for RAG summarisation.
+  Wrap every call so it can fall back to a saved example if credentials/network fail
+  mid-demo (Section 7, mocking rule).
+- **RAG:** `text-embedding-3-small` (OpenAI) over **12 curated NHS/Tommy's pages**
+  (`docs/RAG-CORPUS.md`), indexed at build time into an **in-memory vector store**
+  (JS array + cosine similarity — no external vector DB to provision).
+- **TTS:** OpenAI TTS API (`tts-1`) — streams the English script as audio so the
+  clinician can hear it directly. **This is the demo moment.**
+- **Validation:** **Zod** schema on every LLM output — no raw model text ever
+  reaches the client (`docs/health/SAFETY-GUARDRAILS.md`).
+- **No database, no auth in the hackathon build.** No PII stored server-side.
+  (Production path → pgvector/Pinecone + NHS Login; see `docs/TECH-STACK.md`.)
+- **Deploy:** Vercel (zero-config Next.js).
 - **Environment:** macOS / Linux. The `../hackathon/scripts/*.ps1` helpers are
   **Windows/PowerShell only** — do not run them here. Use the bash equivalents in
   `docs/SETUP.md` / `scripts/` instead.
 
-Keep dependencies minimal. Add a library only when it clearly saves time.
+Two secrets only: `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`. Keep dependencies minimal.
+Add a library only when it clearly saves time.
 
 ---
 
-## 6. Core spine — the maternity product is built on this
+## 6. Core spine — the two flows the product is built on
 
-The universal spine, now specialised for Safer Maternity Care
-(`docs/pathways/4-maternity.md` has the acceptance criteria).
+Specialised for Safer Maternity Care (`docs/pathways/4-maternity.md` has the
+in-scope table + acceptance criteria; `docs/health/SAFETY-GUARDRAILS.md` has the
+hardcoded rules). Build these two flows and **nothing else** for the hackathon.
 
-1. **Conversational intake** — a chat or guided form where a pregnant user
-   describes a worry or symptom in plain language.
-2. **AI reasoning layer** — a well-prompted Claude call that interprets the concern
-   and produces a structured, safe, *bounded* response: plain-language context +
-   concrete, assertive questions to ask the midwife/GP ("say this at your
-   appointment"). Always returns a confidence or uncertainty signal. Never a
-   diagnosis.
-3. **Trusted signposting** — every output points to a real, cited NHS / official UK
-   resource, including local maternity services (NHS Service Search API). Never
-   invent a service, phone number, or URL. See `docs/health/NHS-RESOURCES.md`.
-4. **Safety layer** — pregnancy red-flag detection (reduced fetal movement, severe
-   headache, bleeding, etc.) that escalates to urgent real services and
-   short-circuits the normal flow. See `docs/health/SAFETY-GUARDRAILS.md`.
-5. **Privacy-by-default** — minimal data capture, clear "what we store" copy,
-   Supabase RLS on every table, no PII in logs or prompts to third parties.
-6. **History / continuity** — a record of concerns raised and questions asked, so a
-   return user (or her midwife) sees the trail across appointments. This is where
-   "real-world value" becomes visible.
+**Flow A — Express** (symptom → English script + TTS):
+1. User inputs a symptom in Mandarin or English (**text only** — no STT).
+2. **Red-flag gate runs first** — a pure synchronous function over a hardcoded
+   keyword list (EN + Mandarin). On a red-flag it **bypasses all LLM generation**
+   and shows the static emergency card (999 / 111, one-tap call). < 500ms.
+3. Non-urgent → RAG retrieval (top chunks) → Claude generation → a **Zod-validated**
+   structured output: urgency level (Immediate / Today / Next appointment) +
+   plain-language explanation (Mandarin) with a named NHS source + an **English
+   script** + contact type.
+4. **TTS** plays the English script aloud — she can hold the phone up to her midwife.
 
-If intake → AI advocacy coaching → signposting → red-flag escalation work
-end-to-end, we have a demoable product.
+**Flow B — Interpret** (NHS letter → plain language):
+1. User pastes NHS correspondence text (**text only** — no OCR/photo in hackathon).
+2. Claude identifies the document type, grounds it in RAG, and returns: a
+   plain-language explanation (Mandarin + English) + numbered next steps +
+   questions to ask at the next appointment.
+
+Cross-cutting, on every output: a **named NHS/Tommy's source citation**, the
+mandatory disclaimer string, and **Zod validation** (no raw LLM text to the
+client). Trusted signposting only — never invent a service, number, or URL
+(`docs/health/NHS-RESOURCES.md`).
+
+If Express (text → red-flag gate → urgency → English script → TTS) works
+end-to-end, we have a demoable product. Interpret is the second flow; Express alone
+is a complete demo if we run short.
 
 ---
 
 ## 7. Health-impact guardrails — NON-NEGOTIABLE
 
 This track rewards trust and safety. Breaking these loses the 20% "Appropriate AI
-Use" and 20% "Real-World Value" outright. Full detail in
-`docs/health/SAFETY-GUARDRAILS.md`. The rules:
+Use" and 20% "Real-World Value" outright. Full detail, the verbatim system-prompt
+block, the red-flag term lists, and the Zod schemas are in
+`docs/health/SAFETY-GUARDRAILS.md`.
 
-- **No diagnosis.** Frame everything as *support, triage, education, organisation,
-  or signposting*. Never state or imply a diagnosis or a treatment decision.
-- **No invented medical facts.** Clinical content must trace to a cited NHS / NICE /
-  official source. If the model isn't sure, it says so and signposts.
-- **Crisis path always present.** Any sign of self-harm, suicide, abuse, or acute
-  risk → break the normal flow, show real UK crisis resources (999, NHS 111,
-  Samaritans 116 123), do not "reflectively listen" in a way that amplifies harm.
-- **Pregnancy red-flags are the highest-stakes path in this product.** Reduced
-  fetal movement, severe headache/visual disturbance, bleeding, severe abdominal
-  pain, waters breaking early → immediate urgent escalation (999 / maternity
-  triage / 111). **Never reassure away a red-flag.** This path must be tested and
+**The 5 hardcoded rules** (every Claude system prompt includes these verbatim — do
+not paraphrase):
+
+1. **Never produce a diagnostic conclusion.** May describe what a symptom *may*
+   indicate and recommend a clinical action; may not state what the user has.
+2. **Never reassure.** No "this is fine", "don't worry", "you're probably okay".
+   When symptoms look benign: "Your midwife will be able to reassure you after a
+   check."
+3. **Red-flag input bypasses all LLM generation.** Detection runs *before* the
+   model. The emergency card is static content, no generation.
+4. **Every clinical claim cites its NHS/Tommy's source by name** in the output —
+   citation field never empty. If it can't be grounded: "I couldn't find specific
+   NHS guidance on this — please ask your midwife directly."
+5. **Every output ends with the exact string:** *"This is not medical advice.
+   Always confirm with your midwife or doctor."* — a separate field, shown
+   prominently, not removable.
+
+Structural enforcement (safety by architecture, not by disclaimer):
+
+- **Red-flag gate first, always.** Reduced fetal movement, severe headache/visual
+  disturbance, bleeding, suspected pre-eclampsia, waters breaking early, chest
+  pain → static emergency card (999 / maternity triage / 111). **Never reassure
+  away a red-flag** — the exact failure mode MBRRACE-UK documents. Tested and
   unmistakable before demo.
-- **Visible disclaimers.** "This is not medical advice / not a substitute for a
-  clinician / in an emergency call 999." On-screen, not buried.
-- **Privacy is a feature, show it.** Minimal capture, explicit storage notice,
-  no PII sent to third-party AI without a clear boundary, RLS on every table.
+- **Zod on every LLM output.** If Claude's response fails validation, return a safe
+  fallback — **never raw model text** to the client.
+- **Prompt-injection defence.** System prompt is hardcoded server-side; user input
+  is passed as a `role: 'user'` turn only, never interpolated into the system
+  prompt string. `dangerouslySetInnerHTML` is banned.
+- **Crisis path always present.** Self-harm, suicide, abuse, acute risk → break the
+  flow, show real UK crisis resources (999, NHS 111, Samaritans 116 123); do not
+  "reflectively listen" in a way that amplifies harm.
+- **Visible disclaimers** (rule 5), on-screen, not buried.
+- **Privacy is a feature.** No PII stored server-side in the hackathon build. Never
+  log user input server-side — even in dev (medical context is sensitive). No
+  `console.log(userInput)` anywhere. No PII to third parties without a clear
+  boundary.
 - **Mocking is honest.** If a call is mocked for the demo, the demo *says so*.
-- **Vulnerable users.** Assume some users are distressed, low-literacy, or
-  non-native English speakers. Plain language. Large targets. No dark patterns.
+- **Vulnerable users.** Assume distressed, low-literacy, or non-native English
+  speakers. Plain language. Large targets. No dark patterns.
 
 When in doubt on a health-safety call, escalate to the human. Do not ship the
-guess.
+guess. **These five rules are the answer to any safety question a judge asks — know
+them.**
 
 ---
 
@@ -179,22 +238,24 @@ Do not optimise for the most tools loaded. Optimise for the fewest active
 resources that unblock the current phase. Full rationale: `../hackathon/mcp-policy.md`.
 Curated, grounded recommendations for THIS project: **`docs/TOOLS.md`** (read it).
 
-**Default active set:** editor + Supabase MCP (once the project exists) + GitHub
-MCP (repo is remote-backed) + web search for research. Everything else off until
-its phase.
+**Default active set:** editor + GitHub MCP (repo is remote-backed) + web search
+for research. **No Supabase** — the hackathon build has no database (in-memory RAG
++ no auth). Everything else off until its phase.
 
 **Health-relevant MCPs for this pathway** (connect only when needed — see
 `docs/TOOLS.md`):
 - **PubMed** — evidence to back clinical claims (MBRRACE-UK framing, red-flag logic).
 
-The **NHS Service Search API** and **NHS Website Content API** are REST APIs called
-from app code (not MCPs) — see `docs/health/NHS-RESOURCES.md`. Tools for the
-unchosen pathways (Strava, ICD-10, NPI Registry, QRISK3) are **dropped** — do not
-connect them.
+The **NHS Website Content API** (grounding the 12-source RAG corpus and red-flag
+copy) and **NHS Service Search API** (signposting to a real local maternity service)
+are REST APIs called from app code, not MCPs — see `docs/health/NHS-RESOURCES.md`
+and `docs/RAG-CORPUS.md`. **OpenAI** (embeddings + TTS) is a REST dependency, not an
+MCP. Tools for the unchosen pathways (Strava, ICD-10, NPI Registry, QRISK3) are
+**dropped** — do not connect them.
 
-**Build/data MCPs we actually use:** Supabase (data/RLS), GitHub, Figma (UI
-mockups), Canva (pitch graphics, Phase 6 only). Cloudflare and Hugging Face are
-available in-session but **not needed** for this build — leave them idle.
+**Build MCPs we actually use:** GitHub (version safety), Figma (UI mockups), Canva
+(pitch graphics, Phase 6 only). Cloudflare and Hugging Face are available in-session
+but **not needed** for this build — leave them idle. (No Supabase: no DB this build.)
 Skills: `deep-research` (Phase 1 evidence), `design:user-research`,
 `design:ux-copy`, `design:accessibility-review`, `docx`/`pptx`/`pdf` for
 submission material.
@@ -210,14 +271,18 @@ once the research phase ends.
 From `../hackathon/AGENTS.md`, plus our health additions.
 
 - [ ] App runs from a **fresh terminal** (documented in `docs/SETUP.md`).
-- [ ] Core user flow works **without agent help**.
-- [ ] At least one acceptance path is tested or manually verified.
+- [ ] Both flows work **without agent help**: Express (text → urgency → English
+      script → TTS) and Interpret (paste → explanation → next steps → questions).
 - [ ] **Pregnancy red-flag path fires** on a known trigger input (e.g. "baby is
-      moving less") — and is never reassured away.
-- [ ] Disclaimers visible on screen.
-- [ ] Supabase RLS on; no secrets committed (`.env` gitignored; `.env.example` only).
-- [ ] No PII in logs or third-party prompts.
-- [ ] Error states are not embarrassing.
+      moving less" / "胎动减少") and **bypasses the LLM** to the static emergency
+      card — never reassured away.
+- [ ] **No raw LLM output leaks past Zod validation** (test a malformed response).
+- [ ] Every output carries a named NHS/Tommy's citation + the disclaimer string.
+- [ ] **TTS plays** the English script clearly (the demo moment).
+- [ ] No secrets committed (`.env.local` gitignored; `.env.example` only).
+- [ ] No PII logged server-side; no user input in `console.log`.
+- [ ] `npm run build` + `npm run lint` pass with 0 TypeScript errors.
+- [ ] Error states are not embarrassing; mocked calls are labelled.
 - [ ] Demo script matches actual product behaviour.
 
 ---
@@ -229,16 +294,24 @@ vigilant-winner/
 ├─ CLAUDE.md                      ← you are here (the contract)
 ├─ README.md                      ← public submission readme
 ├─ AGENTS.md                      ← short agent contract for code owners
-├─ .env.example                   ← required env vars (never commit real .env)
+├─ .env.example                   ← required env vars (never commit real .env.local)
+├─ .cursor/rules/                 ← always-active Cursor agent constraints (3 rules)
 ├─ docs/
 │  ├─ SETUP.md                    ← macOS/Linux setup + fresh-terminal start
 │  ├─ TOOLS.md                    ← grounded MCP/skill/template recommendations
+│  ├─ TECH-STACK.md               ← stack, API routes, latency budget, prod path
+│  ├─ BUILD-CHECKLIST.md          ← block-by-block 2-day build (review-gated)
+│  ├─ SCOPE_MEMORY.md             ← agent's self-learning log (read before each block)
+│  ├─ RAG-CORPUS.md               ← the 12 NHS/Tommy's sources to index
+│  ├─ DEMO-SCRIPT.md              ← pitch narrative + 3 live scenarios + Q&A
 │  ├─ judge-rubric.md             ← pre-submission self-check (with weights)
+│  ├─ RECONCILE-2026-06-06.md     ← record of the materna→vigilant-winner reconcile
 │  ├─ pathways/
 │  │  ├─ DECISION-BRIEF.md        ← decision record: why Safer Maternity Care
 │  │  └─ 4-maternity.md           ← THE working spec (top source of truth)
 │  └─ health/
-│     ├─ SAFETY-GUARDRAILS.md     ← the health rules in detail
+│     ├─ SAFETY-GUARDRAILS.md     ← 5 hardcoded rules, red-flag lists, Zod schemas
+│     ├─ COMPLIANCE.md            ← regulatory position (Class 0) + GDPR + prod path
 │     └─ NHS-RESOURCES.md         ← real, cited NHS/UK endpoints & helplines
 └─ (app code added in Phase 2/3)
 ```

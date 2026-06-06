@@ -1,44 +1,50 @@
-# vigilant-winner
+# vigilant-winner · **Maternify**
 
 Submission for **VibeHack London 2026** · Track: **Health Impact** (sponsor: Cursor).
 
-**Safer Maternity Care** — supporting high-risk and under-heard mothers in
-accessing care. Built in 24 hours, designed to be **live, usable, evidenced, and
-safe**.
+**Safer Maternity Care** — a multilingual communication tool for minority-ethnic
+pregnant women in the UK. Built in 24 hours, designed to be **live, usable,
+evidenced, and safe**.
 
-> *"Understand what's worth raising, how to be heard, and when to act — with you
-> at every appointment."*
+> *"ChatGPT gives information. **Maternify gives her a voice.**"*
 
-A pregnant user describes a worry in plain language. The AI explains it in plain
-terms, coaches her on **how to raise it with her midwife** ("say this at your
-appointment"), checks for **pregnancy red-flags** and escalates urgent symptoms to
-real services, and points to real local NHS maternity services. **Advocacy, not
-diagnosis** — MBRRACE-UK shows Black women are ~2.3–3× more likely to die in
-pregnancy/childbirth than White women, driven in part by women not being heard.
+Two flows. **Express:** a pregnant user describes a symptom in Mandarin or English;
+Maternify checks for **pregnancy red-flags** (and on a red-flag bypasses the AI
+entirely to a 999/triage emergency card), signals urgency, and gives her a
+**clinically-grounded English script she can speak — or *play* (text-to-speech) —
+to her midwife**. **Interpret:** she pastes an NHS letter and gets a plain-language
+explanation, next steps, and the questions to ask. Not translation, not diagnosis —
+**a voice.** MBRRACE-UK found 96% of reviewed maternal-death cases had a documented
+interpreter need and only 27% had one; Black women are ~2.3–3× more likely to die
+in pregnancy/childbirth than White women. Communication failure costs lives.
 
 ## Start here
 - **[`CLAUDE.md`](CLAUDE.md)** — the operating contract. Read first.
-- **[`docs/pathways/4-maternity.md`](docs/pathways/4-maternity.md)** — the working spec (top source of truth).
-- **[`docs/pathways/DECISION-BRIEF.md`](docs/pathways/DECISION-BRIEF.md)** — why this pathway.
-- **[`docs/TOOLS.md`](docs/TOOLS.md)** — which MCPs / skills / templates to use, and when.
-- **[`docs/SETUP.md`](docs/SETUP.md)** — run it locally (macOS/Linux).
-- **[`docs/health/SAFETY-GUARDRAILS.md`](docs/health/SAFETY-GUARDRAILS.md)** — the non-negotiable health rules.
+- **[`docs/pathways/4-maternity.md`](docs/pathways/4-maternity.md)** — the Maternify working spec (top source of truth).
+- **[`docs/health/SAFETY-GUARDRAILS.md`](docs/health/SAFETY-GUARDRAILS.md)** — the 5 hardcoded rules, red-flag lists, Zod schemas.
+- **[`docs/BUILD-CHECKLIST.md`](docs/BUILD-CHECKLIST.md)** — the block-by-block build · **[`docs/SCOPE_MEMORY.md`](docs/SCOPE_MEMORY.md)** — the agent's self-learning log.
+- **[`docs/DEMO-SCRIPT.md`](docs/DEMO-SCRIPT.md)** — pitch + 3 live scenarios · **[`docs/TECH-STACK.md`](docs/TECH-STACK.md)** — stack & API routes.
+- **[`docs/TOOLS.md`](docs/TOOLS.md)** — which MCPs / skills to use, and when · **[`docs/SETUP.md`](docs/SETUP.md)** — run it locally (macOS/Linux).
 
 ## Stack
-Next.js + TypeScript + Tailwind · Supabase (Postgres/Auth/RLS) · Anthropic Claude API.
+Next.js 14 + TypeScript + Tailwind · Claude Sonnet/Haiku (generation) · OpenAI
+`text-embedding-3-small` + **in-memory RAG** over 12 NHS/Tommy's pages · OpenAI TTS
+(English-script playback) · **Zod** on every output · Vercel. **No database, no
+login** — no PII stored server-side.
 
 ## Principles (the short version)
 - Live, working product — not a concept pitch.
 - AI is the **core mechanic**, used responsibly.
-- **No diagnosis.** Advocacy, education, signposting.
-- Pregnancy red-flag escalation always present — never reassured away.
-- Crisis path always present. Privacy is a visible feature.
-- Every health claim is cited to a real NHS / official UK source.
+- **No diagnosis. No reassurance** ("this is fine"). Communication, education, signposting.
+- Pregnancy red-flag input **bypasses the AI** to a 999/triage emergency card — never reassured away.
+- Every output is **Zod-validated** and cites a named NHS/Tommy's source.
+- Crisis path always present. Privacy is a visible feature (nothing stored).
 
 ## Disclaimer
 This project provides **support and information, not medical advice**, and is not a
-substitute for a midwife, doctor, or maternity triage. **In an emergency, call 999.
-For urgent pregnancy concerns, contact your maternity unit or call 111.**
+substitute for a midwife, doctor, or maternity triage, and **not a professional
+interpreter service**. **In an emergency, call 999. For urgent pregnancy concerns,
+contact your maternity unit or call 111.**
 
 ---
 *Repo: https://github.com/Abdulbosit-AiM/vigilant-winner*

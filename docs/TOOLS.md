@@ -14,14 +14,21 @@ Legend: ✅ available in this session · 🔌 connect via MCP registry when need
 
 | Tool | Type | Why it's must-have | Phase |
 | --- | --- | --- | --- |
-| **Supabase** ✅ | MCP | Postgres + Auth + RLS = our whole data/privacy story in one. RLS *is* the "privacy as a feature" evidence judges reward. Create tables (concerns, check-ins, question history), set policies, generate TS types. | 2–4 |
+| **Anthropic Claude API** | external (app code) | The central AI capability: Sonnet for Express generation, Haiku for RAG summarisation. Worry → grounded English script + urgency; letter → explanation. Wrap with a mock fallback for demo safety. | 3–6 |
+| **OpenAI API** | external (app code) | Two jobs: `text-embedding-3-small` for the **in-memory RAG** index, and **TTS** for the English-script audio (**the demo moment**). | 3–5 |
+| **Zod** | lib | Schema-validate **every** LLM output — no raw model text to the client. The structural half of the safety story. Write the schema before the prompt. | 3–6 |
+| **NHS Website Content API** | REST (app code) | Official NHS.uk pregnancy content — the source for the **12-page RAG corpus** (`docs/RAG-CORPUS.md`) and red-flag copy. *Not an MCP.* | 3–4 |
+| **NHS Service Search API** | REST (app code) | Find a **real local maternity service** for signposting. Free, needs subscription key. *Not an MCP.* See `docs/health/NHS-RESOURCES.md`. | 4 |
 | **GitHub** ✅ | MCP | Repo is remote-backed (`Abdulbosit-AiM/vigilant-winner`). Issues, PRs, CI context, version safety during a fast build. | 0–6 |
 | **Web search** ✅ | core | Ground every health claim with NHS / NICE / MBRRACE-UK data. 65% of the score is non-technical and evidence-driven. | 1, 5 |
-| **NHS Service Search API** | REST (app code) | Find **real local maternity / specialist services** — the signposting backbone of the core flow. Free, needs subscription key. *Not an MCP.* See `docs/health/NHS-RESOURCES.md`. | 3–4 |
-| **NHS Website Content API** | REST (app code) | Official NHS.uk pregnancy/condition content to ground explanations and red-flag copy. *Not an MCP.* | 3–4 |
-| **Anthropic Claude API** | external | The central AI capability: worry → plain-language context + assertive questions + red-flag escalation. Called from app code; wrap with a mock fallback for demo safety. | 3–6 |
-| **`deep-research`** 🧩 | skill | One pass to nail the evidence base: MBRRACE-UK disparities, pregnancy red-flag guidance (NICE/RCOG via NHS framing). | 1 |
+| **`deep-research`** 🧩 | skill | One pass to nail the evidence base: MBRRACE-UK interpreter-failure + disparity stats, pregnancy red-flag guidance (NICE/RCOG via NHS framing). | 1 |
 | **`docx` / `pptx` / `pdf`** 🧩 | skill | Submission material: one-page product narrative, pitch, demo backup deck. | 6 |
+
+> **No Supabase / no database this build.** The earlier cut used Postgres + RLS for
+> a concern/question-history trail; under the v0.2 reconcile the hackathon build
+> stores **no PII server-side** (privacy = "we keep nothing"). A clinician-readable
+> trail with per-user isolation (Postgres + RLS) returns on the production path
+> (`docs/health/COMPLIANCE.md`).
 
 **Verification/quality (impl owner, during hardening):** the ECC control plane
 exposes `/plan`, `/tdd`, `/code-review`, `/verify`, `/e2e`, `/build-fix` (see
@@ -39,9 +46,9 @@ heard** — tone and accessibility are the differentiators.
 
 | Tool | Type | Why | Phase |
 | --- | --- | --- | --- |
-| **`design:ux-copy`** 🧩 | skill | **Advocacy-tone microcopy** ("say this to your midwife"), disclaimers, red-flag escalation copy that is calm and unmistakable. Plain language for low-literacy / non-native speakers. | 4–5 |
-| **`design:accessibility-review`** 🧩 | skill | WCAG pass. Vulnerable, distressed, multilingual users — accessibility is explicitly a judging strength. | 5 |
-| **`design:user-research`** 🧩 | skill | Sharpen the single persona (under-heard pregnant woman) + her appointment journey = the 20% "User Understanding". | 1 |
+| **`design:ux-copy`** 🧩 | skill | The **English-script** voice (what Maya plays to her midwife), the disclaimer string, and red-flag emergency copy that is calm and unmistakable. Plain language + **Mandarin UI strings** for low-literacy / non-native speakers. | 4–5 |
+| **`design:accessibility-review`** 🧩 | skill | WCAG pass. Vulnerable, distressed, multilingual users — accessibility is explicitly a judging strength. Urgency must read via colour **and** icon **and** text. | 5 |
+| **`design:user-research`** 🧩 | skill | Sharpen the single persona (**Maya** — under-heard, Mandarin-first) + her appointment journey = the 20% "User Understanding". | 1 |
 | **PubMed** 🔌 | MCP | Cite peer-reviewed evidence behind the disparity framing and red-flag logic. Cheap credibility for "Real-World Value" + "Appropriate AI Use". | 1, 4 |
 | **Figma** ✅ | MCP | Quick UI mockups / design-to-code for a clean, trustworthy interface. Trust is visual in health — especially for users who already distrust services. | 1, 4 |
 | **Canva** ✅ | MCP | Fast pitch/submission graphics if we want polish beyond pptx. | 6 |
@@ -58,8 +65,10 @@ Dropped with the pathway decision (6 June 2026). **Do not connect these.**
 - **NPI Registry** 🔌 — US provider IDs, never applicable to the NHS. Gone.
 - **bioRxiv / medRxiv** 🔌 — preprints, not peer-reviewed; PubMed covers our
   evidence needs. Gone.
-- **`docx`/`pdf` letter parsing** — was the NHS Admin core mechanic. The skills
-  stay (for submission material), the letter-parsing use case is gone.
+- **`docx`/`pdf` letter parsing (file upload / OCR)** — was the NHS Admin core
+  mechanic. The skills stay (for submission material). Note: the **Interpret** flow
+  *does* decode NHS letters, but from **pasted text only** — no file upload or OCR
+  in the hackathon build (`docs/pathways/4-maternity.md` §4 out-of-scope).
 - **Hugging Face** ✅ — no specialised open model needed for this build; Claude
   covers the AI layer. Leave disconnected unless a concrete need appears.
 

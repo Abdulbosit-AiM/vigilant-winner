@@ -44,6 +44,10 @@ shipping (the NHS is migrating some APIs in Spring 2026 — see note).
 
 ## 2. Key NHS pregnancy content to ground red-flag logic (verify at build time)
 
+> The full **12-source RAG corpus** (the exact pages to index, with justifications
+> and indexing rules) is in **`docs/RAG-CORPUS.md`**. The pages below are the
+> red-flag subset.
+
 The red-flag checker's clinical content must trace to pages like these — never to
 model memory:
 - NHS — Your baby's movements: https://www.nhs.uk/pregnancy/keeping-well/your-babys-movements/
