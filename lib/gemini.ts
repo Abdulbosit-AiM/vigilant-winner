@@ -41,10 +41,17 @@ export interface GeminiTextResult {
   mocked: boolean;
 }
 
-/** Text (and optionally image) generation. `images` are inline base64 parts. */
+/**
+ * Text (and optionally image) generation. `images` are inline base64 parts.
+ * `systemInstruction` is sent as Gemini's top-level system field so the system
+ * prompt stays SEPARATE from user input (prompt-injection defence — never
+ * interpolate user text into it). `json: true` requests a JSON response body.
+ */
 export async function geminiGenerate(opts: {
   prompt: string;
   images?: InlineData[];
+  systemInstruction?: string;
+  json?: boolean;
 }): Promise<GeminiTextResult> {
   if (!live.gemini()) {
     return {
@@ -57,9 +64,21 @@ export async function geminiGenerate(opts: {
     for (const img of opts.images ?? []) {
       parts.push({ inlineData: { mimeType: img.mimeType, data: img.data } });
     }
-    const json = await postJson(url(env.gemini.textModel, "generateContent"), {
+    const body: Record<string, unknown> = {
       contents: [{ role: "user", parts }],
-    });
+    };
+    if (opts.systemInstruction) {
+      body.systemInstruction = { parts: [{ text: opts.systemInstruction }] };
+    }
+    if (opts.json) {
+      // Disable "thinking" for structured JSON: faster and avoids the
+      // occasional thoughts-only (empty text) candidate from 2.5-flash.
+      body.generationConfig = {
+        responseMimeType: "application/json",
+        thinkingConfig: { thinkingBudget: 0 },
+      };
+    }
+    const json = await postJson(url(env.gemini.textModel, "generateContent"), body);
     const text =
       json?.candidates?.[0]?.content?.parts
         ?.map((p: { text?: string }) => p.text ?? "")
