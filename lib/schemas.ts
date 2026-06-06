@@ -61,3 +61,48 @@ export const ExpressFallbackSchema = z.object({
 export type ExpressFallback = z.infer<typeof ExpressFallbackSchema>;
 
 export type ExpressResponse = ExpressOutput | ExpressEmergency | ExpressFallback;
+
+/**
+ * Shape the MODEL is asked to return for Interpret (PRD §11.3 /
+ * SAFETY-GUARDRAILS Appendix C). The disclaimer is added deterministically
+ * server-side, so it is deliberately absent here.
+ */
+export const InterpretModelSchema = z.object({
+  document_type: z.string().min(1),
+  explanation_native: z.string().min(1),
+  explanation_en: z.string().min(1),
+  explanation_source: z.string().min(1),
+  next_steps: z.array(z.string().min(1)).min(1).max(4),
+  questions_en: z.array(z.string().min(1)).min(2).max(4),
+});
+export type InterpretModel = z.infer<typeof InterpretModelSchema>;
+
+/**
+ * Final validated Interpret payload returned to the client (PRD §11.3).
+ * `explanation_source` non-empty (rule 4); `disclaimer` is the exact literal
+ * (rule 5); `next_steps` 1–4 items; `questions_en` 2–4 items.
+ */
+export const InterpretOutputSchema = z.object({
+  kind: z.literal("interpretation"),
+  document_type: z.string().min(1),
+  explanation_native: z.string().min(1),
+  explanation_en: z.string().min(1),
+  explanation_source: z.string().min(1),
+  next_steps: z.array(z.string().min(1)).min(1).max(4),
+  questions_en: z.array(z.string().min(1)).min(2).max(4),
+  disclaimer: DisclaimerSchema,
+});
+export type InterpretOutput = z.infer<typeof InterpretOutputSchema>;
+
+/** Safe fallback when Interpret generation fails or output fails validation. */
+export const InterpretFallbackSchema = z.object({
+  kind: z.literal("fallback"),
+  message: z.string().min(1),
+  disclaimer: DisclaimerSchema,
+});
+export type InterpretFallback = z.infer<typeof InterpretFallbackSchema>;
+
+export type InterpretResponse =
+  | InterpretOutput
+  | ExpressEmergency
+  | InterpretFallback;
