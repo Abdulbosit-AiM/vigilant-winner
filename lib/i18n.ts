@@ -223,6 +223,11 @@ const en: Dict = {
   "privacy.notMedicalBody":
     "Always confirm with your midwife or doctor. In an emergency, call 999.",
   "privacy.open": "Privacy & data",
+
+  // shell / device frame
+  "shell.simulator": "Phone",
+  "shell.webview": "Web",
+  "shell.switchView": "Switch view",
 };
 
 const zh: Dict = {
@@ -334,7 +339,7 @@ const zh: Dict = {
   "log.fetalWarn": "胎动少于 10 次——请联系助产士",
   "log.bleeding": "出血",
   "log.bleeding.none": "无",
-  "log.bleeding.spotting": "少量",
+  "log.bleeding.spotting": "点滴出血",
   "log.bleeding.moderate": "中量",
   "log.bleeding.heavy": "大量",
   "log.swelling": "肿胀",
@@ -355,7 +360,7 @@ const zh: Dict = {
   "patterns.detected": "检测到 {n} 个模式",
   "patterns.detectedPlural": "检测到 {n} 个模式",
   "patterns.none": "过去 7 天未检测到模式。请坚持每日记录。",
-  "patterns.midwifeScript": "助产士沟通台词",
+  "patterns.midwifeScript": "与助产士沟通的脚本",
   "patterns.play": "播放",
   "patterns.playing": "播放中…",
   "patterns.contact": "联系",
@@ -407,6 +412,11 @@ const zh: Dict = {
   "privacy.notMedical": "并非医疗建议。",
   "privacy.notMedicalBody": "请务必与您的助产士或医生确认。如遇紧急情况，请拨打 999。",
   "privacy.open": "隐私与数据",
+
+  // shell / device frame
+  "shell.simulator": "手机",
+  "shell.webview": "网页",
+  "shell.switchView": "切换视图",
 };
 
 // hi/ur/pl: full coverage for the two original flows (lifted verbatim), with
@@ -471,6 +481,146 @@ const hi: Dict = {
   "interpret.savedDelete": "हटाएं",
   "interpret.save": "इस डिवाइस पर सेव करें",
   "interpret.saved": "इस डिवाइस पर सेव हो गया।",
+
+  "common.appName": "Maternify",
+  "common.startAgain": "फिर से शुरू करें",
+  "common.cancel": "रद्द करें",
+  "common.save": "सेव करें",
+  "common.close": "बंद करें",
+
+  "nav.home": "होम",
+  "nav.express": "बताएं",
+  "nav.interpret": "समझें",
+  "nav.log": "रिकॉर्ड",
+  "nav.patterns": "पैटर्न",
+  "nav.culture": "संस्कृति",
+
+  "home.tagline": "ChatGPT जानकारी देता है। Maternify उसे आवाज़ देता है।",
+  "home.mission":
+    "ब्रिटेन में अल्पसंख्यक जातीय गर्भवती महिलाओं के लिए बहुभाषी संवाद सहायता। यह कोई निदान उपकरण नहीं — एक आवाज़ है।",
+  "home.languageLabel": "भाषा",
+  "home.featuresLabel": "सुविधाएं",
+  "home.safety":
+    "Maternify एक संवाद उपकरण है, चिकित्सा उपकरण नहीं। यह निदान नहीं करता, चिकित्सकों की जगह नहीं लेता, और पेशेवर अनुवाद नहीं देता। हमेशा अपनी मिडवाइफ़ या डॉक्टर से पुष्टि करें।",
+  "home.express.title": "अपने लक्षण बताएं",
+  "home.express.desc":
+    "बताएं कि आप कैसा महसूस करती हैं, और अपनी मिडवाइफ़ को सुनाने के लिए अंग्रेज़ी स्क्रिप्ट पाएं।",
+  "home.interpret.title": "NHS दस्तावेज़ समझें",
+  "home.interpret.desc":
+    "पेस्ट करें, फ़ोटो लें या रिकॉर्ड करें — आसान भाषा में स्पष्टीकरण पाएं।",
+  "home.log.title": "लक्षण रिकॉर्ड",
+  "home.log.desc": "हर दिन नींद, दर्द, मनोदशा और गर्भस्थ शिशु की हलचल दर्ज करें।",
+  "home.patterns.title": "पैटर्न पहचान",
+  "home.patterns.desc":
+    "बार-बार होने वाले लक्षणों को स्वतः पहचानता है और मिडवाइफ़ से बातचीत की स्क्रिप्ट बनाता है।",
+  "home.culture.title": "सांस्कृतिक संदर्भ",
+  "home.culture.desc":
+    "परिचित अभिव्यक्तियों को उन नैदानिक शब्दों में बदलता है जिनकी आपकी मिडवाइफ़ अपेक्षा करती है।",
+
+  "log.title": "लक्षण रिकॉर्ड",
+  "log.subtitle": "हर दिन अपनी स्थिति दर्ज करें",
+  "log.selectDate": "अपनी जांच जोड़ने या बदलने के लिए एक दिन चुनें।",
+  "log.checkinFor": "{date} के लिए जांच",
+  "log.sleep": "नींद की गुणवत्ता",
+  "log.sleepLow": "खराब",
+  "log.sleepHigh": "बहुत अच्छी",
+  "log.pain": "दर्द का स्तर",
+  "log.painNone": "कोई नहीं",
+  "log.painSevere": "गंभीर",
+  "log.painLocation": "दर्द का स्थान",
+  "log.painLocationPlaceholder": "जैसे: कमर के निचले हिस्से में",
+  "log.mood": "मनोदशा",
+  "log.moodLow": "बहुत कम",
+  "log.moodHigh": "बहुत अच्छी",
+  "log.fetal": "गर्भस्थ शिशु की हलचल",
+  "log.fetalWarn": "10 से कम हलचल — अपनी मिडवाइफ़ से संपर्क करें",
+  "log.bleeding": "रक्तस्राव",
+  "log.bleeding.none": "कोई नहीं",
+  "log.bleeding.spotting": "हल्का धब्बा",
+  "log.bleeding.moderate": "मध्यम",
+  "log.bleeding.heavy": "अधिक",
+  "log.swelling": "सूजन",
+  "log.swellingYes": "हां",
+  "log.swellingNo": "नहीं",
+  "log.swellingLocation": "कहां?",
+  "log.swellingLocationPlaceholder": "जैसे: टखने",
+  "log.note": "नोट (वैकल्पिक)",
+  "log.notePlaceholder": "आज आप कैसा महसूस कर रही हैं?",
+  "log.save": "प्रविष्टि सेव करें",
+  "log.saved": "प्रविष्टि सेव हो गई।",
+  "log.history": "इतिहास",
+  "log.noEntries": "अभी कोई प्रविष्टि नहीं। पहली जांच जोड़ने के लिए ऊपर एक दिन चुनें।",
+  "log.entryFor": "{date} की प्रविष्टि",
+
+  "patterns.title": "पैटर्न",
+  "patterns.subtitle": "आपके रिकॉर्ड से पहचाने गए पैटर्न",
+  "patterns.detected": "{n} पैटर्न मिला",
+  "patterns.detectedPlural": "{n} पैटर्न मिले",
+  "patterns.none": "पिछले 7 दिनों में कोई पैटर्न नहीं मिला। रोज़ दर्ज करती रहें।",
+  "patterns.midwifeScript": "मिडवाइफ़ स्क्रिप्ट",
+  "patterns.play": "चलाएं",
+  "patterns.playing": "चल रहा है…",
+  "patterns.contact": "संपर्क",
+  "patterns.source": "स्रोत",
+  "patterns.last7": "पिछले 7 दिन",
+  "patterns.disclaimer":
+    "पैटर्न पहचान केवल सूचना के लिए है। हमेशा अपनी मिडवाइफ़ या डॉक्टर से पुष्टि करें।",
+  "patterns.pain.title": "बार-बार दर्द",
+  "patterns.pain.body":
+    "आपने पिछले {window} दिनों में से {count} दिन दर्द का स्तर 6 या अधिक दर्ज किया।",
+  "patterns.movement.title": "गर्भस्थ शिशु की हलचल में कमी",
+  "patterns.movement.body":
+    "आपने पिछले {window} दिनों में से {count} दिन 10 से कम हलचल दर्ज की।",
+  "patterns.mood.title": "उदास मनोदशा",
+  "patterns.mood.body":
+    "आपने पिछले {window} दिनों में से {count} दिन उदास मनोदशा दर्ज की।",
+  "patterns.bleeding.title": "रक्तस्राव दर्ज",
+  "patterns.bleeding.body":
+    "आपने पिछले {window} दिनों में मध्यम या अधिक रक्तस्राव दर्ज किया।",
+
+  "culture.title": "सांस्कृतिक संदर्भ",
+  "culture.subtitle": "मुहावरा समाधान + संवाद समायोजन",
+  "culture.whatThis": "यह सुविधा क्या करती है",
+  "culture.whatThisBody":
+    "अंग्रेज़ी स्क्रिप्ट बनाने से पहले, Maternify मुहावरेदार या रूपक अभिव्यक्तियों को पहचानता है और उन्हें उनके नैदानिक अर्थ में बदलता है — जैसे “पेट लहरों में कसता है” बन जाता है “गर्भाशय संकुचन”। यह संवाद शैली को भी समायोजित करता है ताकि स्क्रिप्ट NHS की नैदानिक संस्कृति के लिए सीधी और स्पष्ट हो, बिना मांग जैसी लगे।",
+  "culture.examplesLabel": "आम मंदारिन अभिव्यक्तियाँ",
+  "culture.examplesHint":
+    "किसी वाक्यांश पर टैप करके उसे नैदानिक शब्दों में बदलें, या नीचे अपने शब्द लिखें।",
+  "culture.customPlaceholder": "अपने शब्दों में एक अभिव्यक्ति लिखें…",
+  "culture.resolve": "नैदानिक शब्दों में बदलें",
+  "culture.resolving": "बदला जा रहा है…",
+  "culture.literal": "शाब्दिक अर्थ",
+  "culture.clinicalReferent": "नैदानिक संदर्भ",
+  "culture.calibrationTitle": "संवाद शैली समायोजन",
+  "culture.calibrationHint":
+    "कुछ लोग शिष्टाचारवश लक्षणों को कम करके बताते हैं। Maternify स्क्रिप्ट को NHS की नैदानिक संस्कृति के लिए सीधा और स्पष्ट बनाता है — बिना आक्रामक लगे।",
+  "culture.original": "मूल (कम बताया गया)",
+  "culture.calibrated": "समायोजित स्क्रिप्ट",
+  "culture.source": "स्रोत",
+  "culture.error": "अभी इसे बदला नहीं जा सका। कृपया फिर से कोशिश करें।",
+  "culture.disclaimer":
+    "यह चिकित्सा सलाह नहीं है। हमेशा अपनी मिडवाइफ़ या डॉक्टर से पुष्टि करें।",
+
+  "privacy.title": "गोपनीयता और डेटा",
+  "privacy.local": "आपके डिवाइस पर ही सहेजा जाता है।",
+  "privacy.localBody":
+    "आपकी बातचीत और लक्षण रिकॉर्ड केवल इसी डिवाइस पर सहेजे जाते हैं — कभी किसी सर्वर पर अपलोड नहीं होते।",
+  "privacy.cloud": "AI प्रोसेसिंग क्लाउड में होती है।",
+  "privacy.cloudBody":
+    "ट्रांसक्रिप्शन, अनुवाद और स्पष्टीकरण क्लाउड में सुरक्षित रूप से संसाधित होते हैं, लेकिन आपका सहेजा गया इतिहास आपके फ़ोन से कभी बाहर नहीं जाता।",
+  "privacy.noAccount": "किसी खाते या लॉगिन की आवश्यकता नहीं।",
+  "privacy.noAccountBody": "कुछ भी आपसे व्यक्तिगत रूप से नहीं जुड़ा है।",
+  "privacy.notInterpreter": "यह पेशेवर अनुवादक सेवा नहीं है।",
+  "privacy.notInterpreterBody":
+    "यह उपकरण संवाद में सहायता करता है — यह योग्य NHS अनुवादक की जगह नहीं लेता।",
+  "privacy.notMedical": "यह चिकित्सा सलाह नहीं है।",
+  "privacy.notMedicalBody":
+    "हमेशा अपनी मिडवाइफ़ या डॉक्टर से पुष्टि करें। आपात स्थिति में 999 पर कॉल करें।",
+  "privacy.open": "गोपनीयता और डेटा",
+
+  "shell.simulator": "फ़ोन",
+  "shell.webview": "वेब",
+  "shell.switchView": "व्यू बदलें",
 };
 
 const ur: Dict = {
@@ -533,6 +683,147 @@ const ur: Dict = {
   "interpret.savedDelete": "حذف کریں",
   "interpret.save": "اس ڈیوائس پر محفوظ کریں",
   "interpret.saved": "اس ڈیوائس پر محفوظ ہو گیا۔",
+
+  "common.appName": "Maternify",
+  "common.startAgain": "دوبارہ شروع کریں",
+  "common.cancel": "منسوخ کریں",
+  "common.save": "محفوظ کریں",
+  "common.close": "بند کریں",
+
+  "nav.home": "ہوم",
+  "nav.express": "بتائیں",
+  "nav.interpret": "سمجھیں",
+  "nav.log": "ریکارڈ",
+  "nav.patterns": "پیٹرن",
+  "nav.culture": "ثقافت",
+
+  "home.tagline": "ChatGPT معلومات دیتا ہے۔ Maternify اسے آواز دیتا ہے۔",
+  "home.mission":
+    "برطانیہ میں اقلیتی نسلی حاملہ خواتین کے لیے کئی زبانوں میں رابطے کی مدد۔ یہ تشخیصی آلہ نہیں — ایک آواز ہے۔",
+  "home.languageLabel": "زبان",
+  "home.featuresLabel": "خصوصیات",
+  "home.safety":
+    "Maternify ایک رابطہ آلہ ہے، طبی آلہ نہیں۔ یہ تشخیص نہیں کرتا، معالجین کی جگہ نہیں لیتا، اور پیشہ ورانہ ترجمانی فراہم نہیں کرتا۔ ہمیشہ اپنی مڈوائف یا ڈاکٹر سے تصدیق کریں۔",
+  "home.express.title": "اپنی علامات بتائیں",
+  "home.express.desc":
+    "بتائیں کہ آپ کیسا محسوس کرتی ہیں، اور اپنی مڈوائف کو سنانے کے لیے انگریزی اسکرپٹ حاصل کریں۔",
+  "home.interpret.title": "NHS دستاویزات سمجھیں",
+  "home.interpret.desc":
+    "پیسٹ کریں، تصویر لیں یا ریکارڈ کریں — آسان زبان میں وضاحت حاصل کریں۔",
+  "home.log.title": "علامات ریکارڈ",
+  "home.log.desc": "ہر دن نیند، درد، موڈ اور رحم میں بچے کی حرکت درج کریں۔",
+  "home.patterns.title": "پیٹرن کی شناخت",
+  "home.patterns.desc":
+    "بار بار آنے والی علامات کو خودکار طور پر پہچانتا ہے اور مڈوائف سے گفتگو کی اسکرپٹ بناتا ہے۔",
+  "home.culture.title": "ثقافتی سیاق",
+  "home.culture.desc":
+    "مانوس تعبیرات کو ان طبی اصطلاحات میں بدلتا ہے جن کی آپ کی مڈوائف توقع کرتی ہے۔",
+
+  "log.title": "علامات ریکارڈ",
+  "log.subtitle": "ہر دن اپنی کیفیت درج کریں",
+  "log.selectDate": "اپنی انٹری شامل کرنے یا تبدیل کرنے کے لیے ایک دن منتخب کریں۔",
+  "log.checkinFor": "{date} کے لیے انٹری",
+  "log.sleep": "نیند کا معیار",
+  "log.sleepLow": "خراب",
+  "log.sleepHigh": "بہترین",
+  "log.pain": "درد کی شدت",
+  "log.painNone": "کوئی نہیں",
+  "log.painSevere": "شدید",
+  "log.painLocation": "درد کا مقام",
+  "log.painLocationPlaceholder": "مثلاً: کمر کا نچلا حصہ",
+  "log.mood": "موڈ",
+  "log.moodLow": "بہت کم",
+  "log.moodHigh": "بہت اچھا",
+  "log.fetal": "رحم میں بچے کی حرکت",
+  "log.fetalWarn": "10 سے کم حرکت — اپنی مڈوائف سے رابطہ کریں",
+  "log.bleeding": "خون بہنا",
+  "log.bleeding.none": "کوئی نہیں",
+  "log.bleeding.spotting": "ہلکے دھبے",
+  "log.bleeding.moderate": "درمیانہ",
+  "log.bleeding.heavy": "زیادہ",
+  "log.swelling": "سوجن",
+  "log.swellingYes": "ہاں",
+  "log.swellingNo": "نہیں",
+  "log.swellingLocation": "کہاں؟",
+  "log.swellingLocationPlaceholder": "مثلاً: ٹخنے",
+  "log.note": "نوٹ (اختیاری)",
+  "log.notePlaceholder": "آج آپ کیسا محسوس کر رہی ہیں؟",
+  "log.save": "انٹری محفوظ کریں",
+  "log.saved": "انٹری محفوظ ہو گئی۔",
+  "log.history": "تاریخ",
+  "log.noEntries":
+    "ابھی کوئی انٹری نہیں۔ پہلی انٹری شامل کرنے کے لیے اوپر ایک دن منتخب کریں۔",
+  "log.entryFor": "{date} کی انٹری",
+
+  "patterns.title": "پیٹرن",
+  "patterns.subtitle": "آپ کے ریکارڈ سے شناخت شدہ پیٹرن",
+  "patterns.detected": "{n} پیٹرن ملا",
+  "patterns.detectedPlural": "{n} پیٹرن ملے",
+  "patterns.none": "پچھلے 7 دنوں میں کوئی پیٹرن نہیں ملا۔ روزانہ درج کرتی رہیں۔",
+  "patterns.midwifeScript": "مڈوائف اسکرپٹ",
+  "patterns.play": "چلائیں",
+  "patterns.playing": "چل رہا ہے…",
+  "patterns.contact": "رابطہ",
+  "patterns.source": "ماخذ",
+  "patterns.last7": "پچھلے 7 دن",
+  "patterns.disclaimer":
+    "پیٹرن کی شناخت صرف معلومات کے لیے ہے۔ ہمیشہ اپنی مڈوائف یا ڈاکٹر سے تصدیق کریں۔",
+  "patterns.pain.title": "بار بار درد",
+  "patterns.pain.body":
+    "آپ نے پچھلے {window} دنوں میں سے {count} دن درد کی شدت 6 یا اس سے زیادہ درج کی۔",
+  "patterns.movement.title": "رحم میں بچے کی حرکت میں کمی",
+  "patterns.movement.body":
+    "آپ نے پچھلے {window} دنوں میں سے {count} دن 10 سے کم حرکت درج کی۔",
+  "patterns.mood.title": "افسردہ موڈ",
+  "patterns.mood.body":
+    "آپ نے پچھلے {window} دنوں میں سے {count} دن افسردہ موڈ درج کیا۔",
+  "patterns.bleeding.title": "خون بہنا درج ہوا",
+  "patterns.bleeding.body":
+    "آپ نے پچھلے {window} دنوں میں درمیانہ یا زیادہ خون بہنا درج کیا۔",
+
+  "culture.title": "ثقافتی سیاق",
+  "culture.subtitle": "محاورے کی وضاحت + رابطے کی ترتیب",
+  "culture.whatThis": "یہ خصوصیت کیا کرتی ہے",
+  "culture.whatThisBody":
+    "انگریزی اسکرپٹ بنانے سے پہلے، Maternify محاوراتی یا استعاراتی جملوں کو پہچانتا ہے اور انہیں ان کے طبی مفہوم میں بدلتا ہے — جیسے “پیٹ لہروں میں سخت ہوتا ہے” بن جاتا ہے “رحم کے سکڑاؤ”۔ یہ رابطے کے انداز کو بھی ترتیب دیتا ہے تاکہ اسکرپٹ NHS کی طبی ثقافت کے لیے براہِ راست اور واضح ہو، بغیر مطالبہ کرنے جیسی لگے۔",
+  "culture.examplesLabel": "عام مینڈارن (چینی) جملے",
+  "culture.examplesHint":
+    "کسی جملے کو اس کے طبی مفہوم میں بدلنے کے لیے اس پر ٹیپ کریں، یا نیچے اپنا لکھیں۔",
+  "culture.customPlaceholder": "اپنے الفاظ میں کوئی جملہ لکھیں…",
+  "culture.resolve": "طبی اصطلاحات میں بدلیں",
+  "culture.resolving": "بدلا جا رہا ہے…",
+  "culture.literal": "لفظی مطلب",
+  "culture.clinicalReferent": "طبی مفہوم",
+  "culture.calibrationTitle": "رابطے کے انداز کی ترتیب",
+  "culture.calibrationHint":
+    "کچھ لوگ شائستگی کی وجہ سے علامات کو کم کر کے بتاتے ہیں۔ Maternify اسکرپٹ کو NHS کی طبی ثقافت کے لیے براہِ راست اور واضح بناتا ہے — بغیر جارحانہ لگے۔",
+  "culture.original": "اصل (کم بیان کردہ)",
+  "culture.calibrated": "ترتیب شدہ اسکرپٹ",
+  "culture.source": "ماخذ",
+  "culture.error": "ابھی اسے بدلا نہ جا سکا۔ براہ کرم دوبارہ کوشش کریں۔",
+  "culture.disclaimer":
+    "یہ طبی مشورہ نہیں ہے۔ ہمیشہ اپنی مڈوائف یا ڈاکٹر سے تصدیق کریں۔",
+
+  "privacy.title": "رازداری اور ڈیٹا",
+  "privacy.local": "آپ کے ڈیوائس پر ہی محفوظ ہوتا ہے۔",
+  "privacy.localBody":
+    "آپ کی گفتگو اور علامات کے ریکارڈ صرف اسی ڈیوائس پر محفوظ ہوتے ہیں — کبھی کسی سرور پر اپ لوڈ نہیں ہوتے۔",
+  "privacy.cloud": "AI پروسیسنگ کلاؤڈ میں ہوتی ہے۔",
+  "privacy.cloudBody":
+    "نقل، ترجمہ اور وضاحت کلاؤڈ میں محفوظ طریقے سے پراسیس ہوتے ہیں، لیکن آپ کی محفوظ کردہ تاریخ کبھی آپ کے فون سے باہر نہیں جاتی۔",
+  "privacy.noAccount": "کسی اکاؤنٹ یا لاگ ان کی ضرورت نہیں۔",
+  "privacy.noAccountBody": "کچھ بھی آپ سے ذاتی طور پر منسلک نہیں۔",
+  "privacy.notInterpreter": "یہ پیشہ ور مترجم سروس نہیں۔",
+  "privacy.notInterpreterBody":
+    "یہ آلہ رابطے میں مدد کرتا ہے — یہ ایک مستند NHS مترجم کی جگہ نہیں لیتا۔",
+  "privacy.notMedical": "یہ طبی مشورہ نہیں۔",
+  "privacy.notMedicalBody":
+    "ہمیشہ اپنی مڈوائف یا ڈاکٹر سے تصدیق کریں۔ ہنگامی صورت میں 999 پر کال کریں۔",
+  "privacy.open": "رازداری اور ڈیٹا",
+
+  "shell.simulator": "فون",
+  "shell.webview": "ویب",
+  "shell.switchView": "منظر تبدیل کریں",
 };
 
 const pl: Dict = {
@@ -595,6 +886,148 @@ const pl: Dict = {
   "interpret.savedDelete": "Usuń",
   "interpret.save": "Zapisz na tym urządzeniu",
   "interpret.saved": "Zapisano na tym urządzeniu.",
+
+  "common.appName": "Maternify",
+  "common.startAgain": "Zacznij od nowa",
+  "common.cancel": "Anuluj",
+  "common.save": "Zapisz",
+  "common.close": "Zamknij",
+
+  "nav.home": "Start",
+  "nav.express": "Wyraź",
+  "nav.interpret": "Wyjaśnij",
+  "nav.log": "Dziennik",
+  "nav.patterns": "Wzorce",
+  "nav.culture": "Kultura",
+
+  "home.tagline": "ChatGPT daje informacje. Maternify daje jej głos.",
+  "home.mission":
+    "Wielojęzyczne wsparcie w komunikacji dla kobiet w ciąży z mniejszości etnicznych w Wielkiej Brytanii. To nie narzędzie diagnostyczne — to głos.",
+  "home.languageLabel": "Język",
+  "home.featuresLabel": "Funkcje",
+  "home.safety":
+    "Maternify to narzędzie komunikacji, a nie urządzenie medyczne. Nie diagnozuje, nie zastępuje personelu medycznego ani nie zapewnia profesjonalnego tłumaczenia. Zawsze potwierdź u swojej położnej lub lekarza.",
+  "home.express.title": "Wyraź swoje objawy",
+  "home.express.desc":
+    "Opisz, jak się czujesz, i otrzymaj angielski skrypt do przeczytania lub odtworzenia położnej.",
+  "home.interpret.title": "Zrozum dokumenty NHS",
+  "home.interpret.desc":
+    "Wklej, sfotografuj lub nagraj — otrzymaj wyjaśnienie prostym językiem.",
+  "home.log.title": "Dziennik objawów",
+  "home.log.desc": "Zapisuj sen, ból, nastrój i ruchy płodu każdego dnia.",
+  "home.patterns.title": "Wykrywanie wzorców",
+  "home.patterns.desc":
+    "Automatycznie wykrywa powtarzające się objawy i tworzy skrypt rozmowy z położną.",
+  "home.culture.title": "Kontekst kulturowy",
+  "home.culture.desc":
+    "Zamienia znajome wyrażenia na terminy kliniczne, których oczekuje położna.",
+
+  "log.title": "Dziennik objawów",
+  "log.subtitle": "Śledź samopoczucie każdego dnia",
+  "log.selectDate": "Wybierz dzień, aby dodać lub edytować wpis.",
+  "log.checkinFor": "Wpis na {date}",
+  "log.sleep": "Jakość snu",
+  "log.sleepLow": "Słaba",
+  "log.sleepHigh": "Doskonała",
+  "log.pain": "Poziom bólu",
+  "log.painNone": "Brak",
+  "log.painSevere": "Silny",
+  "log.painLocation": "Lokalizacja bólu",
+  "log.painLocationPlaceholder": "np. dolny odcinek pleców",
+  "log.mood": "Nastrój",
+  "log.moodLow": "Bardzo niski",
+  "log.moodHigh": "Świetny",
+  "log.fetal": "Ruchy płodu",
+  "log.fetalWarn": "Mniej niż 10 ruchów — skontaktuj się z położną",
+  "log.bleeding": "Krwawienie",
+  "log.bleeding.none": "Brak",
+  "log.bleeding.spotting": "Plamienie",
+  "log.bleeding.moderate": "Umiarkowane",
+  "log.bleeding.heavy": "Obfite",
+  "log.swelling": "Obrzęk",
+  "log.swellingYes": "Tak",
+  "log.swellingNo": "Nie",
+  "log.swellingLocation": "Gdzie?",
+  "log.swellingLocationPlaceholder": "np. kostki",
+  "log.note": "Notatka (opcjonalnie)",
+  "log.notePlaceholder": "Jak się dziś czujesz?",
+  "log.save": "Zapisz wpis",
+  "log.saved": "Wpis zapisany.",
+  "log.history": "Historia",
+  "log.noEntries":
+    "Brak wpisów. Wybierz dzień powyżej, aby dodać pierwszy wpis.",
+  "log.entryFor": "Wpis na {date}",
+
+  "patterns.title": "Wzorce",
+  "patterns.subtitle": "Wzorce wykryte z Twojego dziennika",
+  "patterns.detected": "Wykryto {n} wzorzec",
+  "patterns.detectedPlural": "Wykryto {n} wzorców",
+  "patterns.none":
+    "Brak wzorców w ostatnich 7 dniach. Zapisuj codziennie.",
+  "patterns.midwifeScript": "Skrypt dla położnej",
+  "patterns.play": "Odtwórz",
+  "patterns.playing": "Odtwarzanie…",
+  "patterns.contact": "Kontakt",
+  "patterns.source": "Źródło",
+  "patterns.last7": "Ostatnie 7 dni",
+  "patterns.disclaimer":
+    "Wykrywanie wzorców ma charakter wyłącznie informacyjny. Zawsze potwierdź u położnej lub lekarza.",
+  "patterns.pain.title": "Nawracający ból",
+  "patterns.pain.body":
+    "W ciągu ostatnich {window} dni odnotowałaś ból na poziomie 6 lub wyższym przez {count} dni.",
+  "patterns.movement.title": "Zmniejszone ruchy płodu",
+  "patterns.movement.body":
+    "W ciągu ostatnich {window} dni odnotowałaś mniej niż 10 ruchów płodu przez {count} dni.",
+  "patterns.mood.title": "Obniżony nastrój",
+  "patterns.mood.body":
+    "W ciągu ostatnich {window} dni odnotowałaś obniżony nastrój przez {count} dni.",
+  "patterns.bleeding.title": "Odnotowano krwawienie",
+  "patterns.bleeding.body":
+    "W ciągu ostatnich {window} dni odnotowałaś umiarkowane lub obfite krwawienie.",
+
+  "culture.title": "Kontekst kulturowy",
+  "culture.subtitle": "Rozszyfrowanie idiomów + kalibracja komunikacji",
+  "culture.whatThis": "Co robi ta funkcja",
+  "culture.whatThisBody":
+    "Przed wygenerowaniem angielskiego skryptu Maternify rozpoznaje wyrażenia idiomatyczne lub metaforyczne i przekłada je na odpowiedniki kliniczne — na przykład „brzuch napina się falami” staje się „skurczami macicy”. Dostosowuje też styl komunikacji, aby skrypt był bezpośredni i jasny dla kultury klinicznej NHS, nie brzmiąc przy tym roszczeniowo.",
+  "culture.examplesLabel": "Typowe wyrażenia mandaryńskie",
+  "culture.examplesHint":
+    "Dotknij frazę, aby przełożyć ją na odpowiednik kliniczny, lub wpisz własną poniżej.",
+  "culture.customPlaceholder": "Wpisz wyrażenie własnymi słowami…",
+  "culture.resolve": "Przełóż na terminy kliniczne",
+  "culture.resolving": "Rozszyfrowywanie…",
+  "culture.literal": "Znaczenie dosłowne",
+  "culture.clinicalReferent": "Odpowiednik kliniczny",
+  "culture.calibrationTitle": "Kalibracja stylu komunikacji",
+  "culture.calibrationHint":
+    "Niektórzy z grzeczności bagatelizują objawy. Maternify dostosowuje skrypty tak, by były bezpośrednie i jasne dla kultury klinicznej NHS — bez brzmienia agresywnego.",
+  "culture.original": "Oryginał (zbagatelizowany)",
+  "culture.calibrated": "Skalibrowany skrypt",
+  "culture.source": "Źródło",
+  "culture.error": "Nie udało się teraz przetworzyć. Spróbuj ponownie.",
+  "culture.disclaimer":
+    "To nie jest porada medyczna. Zawsze potwierdź u położnej lub lekarza.",
+
+  "privacy.title": "Prywatność i dane",
+  "privacy.local": "Przechowywane lokalnie na Twoim urządzeniu.",
+  "privacy.localBody":
+    "Twoje rozmowy i dzienniki objawów są zapisywane tylko na tym urządzeniu — nigdy nie są wysyłane na serwer.",
+  "privacy.cloud": "Przetwarzanie AI odbywa się w chmurze.",
+  "privacy.cloudBody":
+    "Transkrypcja, tłumaczenie i wyjaśnienia są bezpiecznie przetwarzane w chmurze, ale Twoja zapisana historia nigdy nie opuszcza telefonu.",
+  "privacy.noAccount": "Nie wymaga konta ani logowania.",
+  "privacy.noAccountBody": "Nic nie jest powiązane z Tobą osobiście.",
+  "privacy.notInterpreter": "To nie profesjonalna usługa tłumacza.",
+  "privacy.notInterpreterBody":
+    "To narzędzie wspiera komunikację — nie zastępuje wykwalifikowanego tłumacza NHS.",
+  "privacy.notMedical": "To nie porada medyczna.",
+  "privacy.notMedicalBody":
+    "Zawsze potwierdź u położnej lub lekarza. W nagłym wypadku zadzwoń pod 999.",
+  "privacy.open": "Prywatność i dane",
+
+  "shell.simulator": "Telefon",
+  "shell.webview": "Przeglądarka",
+  "shell.switchView": "Zmień widok",
 };
 
 export const STRINGS: Record<Lang, Dict> = { en, zh, hi, ur, pl };

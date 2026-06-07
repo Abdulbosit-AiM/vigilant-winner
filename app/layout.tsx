@@ -1,13 +1,18 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { LangProvider } from "@/components/LangProvider";
-import BottomTabBar from "@/components/BottomTabBar";
+import AppShell from "@/components/AppShell";
 import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "Maternify",
   description:
     "Express your maternity symptoms clearly and understand NHS letters — support, not diagnosis.",
+  icons: {
+    icon: "/favicon.webp",
+    shortcut: "/favicon.webp",
+    apple: "/favicon.webp",
+  },
 };
 
 export const viewport: Viewport = {
@@ -37,10 +42,7 @@ export default function RootLayout({
       </head>
       <body className="bg-background text-foreground">
         <LangProvider>
-          <div className="relative mx-auto min-h-screen max-w-[430px] bg-background">
-            <main className="pb-20">{children}</main>
-            <BottomTabBar />
-          </div>
+          <AppShell>{children}</AppShell>
           <Toaster position="top-center" richColors />
         </LangProvider>
       </body>

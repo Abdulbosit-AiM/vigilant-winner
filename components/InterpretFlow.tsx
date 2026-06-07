@@ -3,7 +3,6 @@
 import { useRef, useState } from "react";
 import { Camera, AudioLines, Save, Trash2, RotateCcw } from "lucide-react";
 import EmergencyCard from "@/components/EmergencyCard";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
 import type { EmergencyCardData } from "@/lib/emergencyCard";
 import { blobToWavBase64 } from "@/lib/audioClient";
 import { useLang } from "@/components/LangProvider";
@@ -202,12 +201,9 @@ export default function InterpretFlow() {
 
   return (
     <section className="w-full space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 className="text-xl font-bold text-foreground" dir={rtl ? "rtl" : undefined}>
-          {t("interpret.title")}
-        </h2>
-        <LanguageSwitcher />
-      </div>
+      <h2 className="text-xl font-bold text-foreground" dir={rtl ? "rtl" : undefined}>
+        {t("interpret.title")}
+      </h2>
 
       <p className="text-sm text-muted-foreground" dir={rtl ? "rtl" : undefined}>
         {t("interpret.subtitle")}
