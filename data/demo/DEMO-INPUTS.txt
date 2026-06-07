@@ -1,0 +1,19 @@
+MATERNIFY DEMO INPUTS — copy-paste only, no typing live (docs/DEMO-SCRIPT.md)
+
+=== Scenario 1 — Express (Mandarin, 34 weeks, reduced movement) ===
+我的宝宝今天动得很少，我有点担心。我现在34周了。
+
+=== Scenario 2 — Interpret (screening letter, 1 in 85) ===
+Dear Patient,
+
+Your combined first-trimester screening result for Down's syndrome (trisomy 21), Edwards' syndrome (trisomy 18), and Patau's syndrome (trisomy 13) is as follows:
+
+Down's syndrome: 1 in 85 — HIGHER CHANCE
+Edwards' and Patau's syndromes: 1 in 10,000 — LOWER CHANCE
+
+You have been referred to the Fetal Medicine Unit for further discussion of your options. Please call [number] to book your appointment.
+
+NHS Screening Programmes
+
+=== Scenario 3 — Red flag (staged) ===
+I have a very bad headache and my vision is blurry

@@ -226,13 +226,15 @@ Risk for next block: —
 
 ---
 
-### Block 12 — Demo Prep · PENDING
-Built: —
-Worked: —
-Struggled: —
-Learned: —
-Deviated: —
-Risk for next block: —
+### Block 12 — Demo Prep · COMPLETE (agent side — human rehearsal/recording outstanding)
+Built:
+- `docs/DEMO-SCRIPT.md` reconciled to ACTUAL product behaviour (verified by curl against `DEMO_SAFE_MODE=true` dev server, 7 June): new **Demo configuration** section (DEMO_SAFE_MODE on, offline-badge honesty line, pre-recorded TTS clip, simulator-toggle beat, live-mode only if `/api/health` confirms quota); Scenario 1/2 expected outputs replaced with the real fixture content (incl. the actual English script text and the corrected "out of 85 women, 1 baby — 84 not" maths, was wrongly "out of 100"); Scenario 3 expected output = the real bilingual card ("Call 999 or go to A&E now", tel:999 + tel:111, maternity-triage note) + a prepared answer for "why doesn't it say pre-eclampsia" (condition-naming on the emergency path is diagnosis-adjacent); optional rehearsed-only **OCR beat** added to Scenario 2 with the quota caveat (OCR is live even in demo mode, no fixture — default to paste); stale **Whisper** Q&A answer → Gemini multimodal; layered Fallback Plan (app's built-in degradation = layer 0) + a concrete **pre-demo morning checklist** incl. the "what's real vs mocked" answer.
+- `data/demo/DEMO-INPUTS.txt` — the three copy-paste inputs (no typing live).
+Worked: all three demo scenarios verified end-to-end in DEMO_SAFE_MODE — S1 exact Mandarin input does NOT trip the gate ("动得很少" ≠ "胎动减少") → guidance fixture (today/midwife_team/offline:true); S2 letter → interpretation fixture (3 steps/3 questions); S3 → REAL emergency card (matched "bad headache", <10ms); `/demo/express-script.wav` serves 200 (584,250 bytes); `/api/tts` in demo mode → clean 503 `mocked:true` so the client uses the clip. build/lint/56 tests green.
+Struggled: nothing — the M6 fixture discipline made this a verification pass, not a build.
+Learned: write demo-script "expected outputs" by pasting what the product actually returns, then edit for brevity — aspirational expected-outputs drift (the "1 in 100" maths slip and the pre-eclampsia line survived two doc revisions unnoticed).
+Deviated: none.
+Risk for next block (deploy + final checks): HUMAN TODOs — pre-record the screen capture of the 3 scenarios, capture backup screenshots, rehearse 2×, assign the single demo driver, and set `DEMO_SAFE_MODE=true` in the Vercel env for the deployed URL. Supabase `events`/`corpus` tables still absent (handled, non-fatal — but creating them removes the only error line in the server log). Block 9 (Mandarin QA) and 11 (Deploy) remain.
 
 ---
 
