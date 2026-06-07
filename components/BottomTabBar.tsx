@@ -27,7 +27,7 @@ export default function BottomTabBar() {
   const t = useT();
 
   return (
-    <nav className="fixed bottom-0 left-1/2 z-40 w-full max-w-[430px] -translate-x-1/2 border-t border-border bg-card/95 backdrop-blur-sm">
+    <nav className="z-10 w-full shrink-0 border-t border-border bg-card/95 backdrop-blur-sm">
       <div className="flex items-stretch">
         {NAV_ITEMS.map(({ href, icon: Icon, key }) => {
           const isActive =

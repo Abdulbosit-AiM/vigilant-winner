@@ -11,7 +11,6 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { useT } from "@/components/LangProvider";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
 import PrivacyLink from "@/components/PrivacyLink";
 
 const FEATURES: { key: string; href: string; icon: LucideIcon; color: string }[] =
@@ -46,16 +45,8 @@ export default function HomeScreen() {
         </div>
       </div>
 
-      {/* Language switcher */}
-      <div className="flex items-center justify-between px-5 pt-4">
-        <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-          {t("home.languageLabel")}
-        </span>
-        <LanguageSwitcher />
-      </div>
-
       {/* Mission */}
-      <div className="px-5 py-4">
+      <div className="px-5 pb-4 pt-5">
         <div className="mat-card-teal p-4">
           <p className="text-sm leading-relaxed text-teal-900">
             {t("home.mission")}
