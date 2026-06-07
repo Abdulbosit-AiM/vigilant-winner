@@ -27,10 +27,11 @@ in pregnancy/childbirth than White women. Communication failure costs lives.
 - **[`docs/TOOLS.md`](docs/TOOLS.md)** — which MCPs / skills to use, and when · **[`docs/SETUP.md`](docs/SETUP.md)** — run it locally (macOS/Linux).
 
 ## Stack
-Next.js 14 + TypeScript + Tailwind · Claude Sonnet/Haiku (generation) · OpenAI
-`text-embedding-3-small` + **in-memory RAG** over 12 NHS/Tommy's pages · OpenAI TTS
-(English-script playback) · **Zod** on every output · Vercel. **No database, no
-login** — no PII stored server-side.
+Next.js 14 + TypeScript + Tailwind · **GLM-5.1** (generation, Gemini fallback) ·
+**Gemini** embeddings + **in-memory RAG** over curated NHS/Tommy's pages · Gemini
+**TTS** (English-script playback) + STT + OCR · **Zod** on every output ·
+Supabase (corpus backup + anonymous events only) · Vercel. **No login, no PII
+stored server-side.**
 
 ## Principles (the short version)
 - Live, working product — not a concept pitch.

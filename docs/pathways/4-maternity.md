@@ -93,7 +93,9 @@ the user can play to her midwife**. Not translation. Not information. A voice.
 | Express flow | **Text input only** (no STT); urgency signal; English script; next-action; TTS playback |
 | Interpret flow | **Text paste only** (no OCR/photo); plain-language explanation; next steps; questions to ask |
 | Languages | Input: Mandarin (Simplified) + English · Output: Mandarin explanation + English script |
-| TTS | OpenAI TTS · English-script audio · Play button → clinician hears it directly |
+| TTS | Gemini TTS · English-script audio · Play button → clinician hears it directly |
+| Voice / STT input (bonus) | Gemini multimodal STT · mic on Express · degrades to "type instead" |
+| OCR / photo upload (bonus) | Gemini vision · letter photo → confirmed text → Interpret · image never stored |
 | Urgency gate | **Hardcoded** red-flag list → emergency card (bypasses all LLM generation) |
 | RAG | 12 curated NHS/Tommy's pages indexed at build time (`docs/RAG-CORPUS.md`) |
 | UI | Single-page web app · mobile-first · **no login** |
@@ -103,18 +105,18 @@ the user can play to her midwife**. Not translation. Not information. A voice.
 
 | Feature | Status |
 |---------|--------|
-| Voice / STT input | Dropped: Web Speech API multilingual unreliable; demo risk |
-| OCR / photo upload | Dropped: separate problem; complexity without demo value |
 | Cantonese | Dropped: Mandarin only for hackathon |
 | User accounts / auth | Dropped: privacy complexity |
 | Real-time translation | Out of scope entirely (regulatory risk) |
 | Urdu, Bengali, Arabic | v1 roadmap |
-| Persistent history / DB | Out of scope: no database in the hackathon build |
+| Persistent user history | Out of scope: no PII stored in the hackathon build |
 
-> Note on history: the earlier vigilant-winner cut included a Supabase concern/
-> response trail. Under the v0.2 reconcile the hackathon build stores **no PII
-> server-side** and ships no database; a clinician-readable trail returns on the
-> production path (`docs/health/COMPLIANCE.md`).
+> Note (v0.3): STT and OCR moved **into scope as bonus tier** — Gemini handles both
+> with safe degradation (BUILD-PLAN M4/M5); the protected demo core remains Express
+> + TTS + red-flag card. On history: the hackathon build stores **no PII
+> server-side** — Supabase holds only public corpus text and anonymous events; a
+> clinician-readable trail returns on the production path
+> (`docs/health/COMPLIANCE.md`).
 
 ---
 
@@ -127,7 +129,7 @@ User inputs symptom in Mandarin or English (text)
   ↓
 Red-flag gate (hardcoded list, pure sync function, < 500ms)
   ├── URGENT → Emergency card (static, no LLM) + 999/111 one-tap
-  └── NON-URGENT → RAG retrieval → Claude Sonnet generation
+  └── NON-URGENT → RAG retrieval → GLM generation (Gemini fallback)
         ↓ Zod-validated output:
           1. Urgency: Immediate / Today / Next appointment
           2. Plain-language explanation (Mandarin) + NHS source name
@@ -185,10 +187,13 @@ blood-result summaries.
 
 ## 8. Tools
 
-- **NHS Website Content API** — ground explanations and red-flag copy in official
-  NHS pregnancy content (the 12-source corpus, `docs/RAG-CORPUS.md`).
-- **NHS Service Search API** — find a real local maternity service for signposting.
-- **OpenAI** — `text-embedding-3-small` (RAG) + TTS (English-script audio).
+- **Public NHS/Tommy's pages** — ground explanations and red-flag copy in official
+  pregnancy content, scraped + indexed at build time (the corpus, `docs/RAG-CORPUS.md`).
+- **NHS Service Search API** — find a real local maternity service for signposting
+  (production path).
+- **GLM-5.1 (Z.ai)** — primary generation. **Gemini** — fallback generation,
+  embeddings (RAG), TTS (English-script audio), STT, OCR.
+- **Supabase** — corpus text backup + anonymous events (no auth, no PII).
 - `design:ux-copy` (advocacy tone, Mandarin strings) + `design:accessibility-review`
   (multilingual, low-literacy, distressed users).
 - Evidence via MBRRACE-UK / PubMed. See `docs/health/NHS-RESOURCES.md`.

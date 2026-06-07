@@ -24,8 +24,8 @@ Record architectural decisions made before code was written.
 These carry forward into every block.
 
 ### Decision: Zod-first development
-Write the output Zod schema for each API route BEFORE writing the Claude prompt.
-The schema is the contract. The prompt is engineered to satisfy the schema.
+Write the output Zod schema for each API route BEFORE writing the generation
+prompt. The schema is the contract. The prompt is engineered to satisfy the schema.
 Rationale: reverse order causes prompt rewrites when schema doesn't match.
 
 ### Decision: urgencyGate before LLM (always)
@@ -37,9 +37,12 @@ Rationale: latency on emergency path must be < 500ms. LLM latency is 1–8s.
 No external vector DB (Pinecone, pgvector, Weaviate). Embeddings in JS array, cosine similarity.
 Rationale: 12 sources fit in memory. External DB setup takes 1–2 hours. Not worth it for hackathon.
 
-### Decision: TTS streaming
-OpenAI TTS response piped directly to client as `ReadableStream`. Never buffer to memory first.
-Rationale: buffering adds 1–3s delay. Streaming starts playback immediately.
+### Decision: TTS streaming — **SUPERSEDED (Block 5 / M4)**
+~~OpenAI TTS response piped directly to client as `ReadableStream`.~~
+Superseded by the v0.3 stack: **Gemini TTS returns raw PCM, server-wraps to WAV
+(`lib/wav.ts`), returned as base64 in one JSON response — never a stream** —
+serverless streaming is unreliable, and a pre-recorded clip in `/public/demo`
+backs the Play moment. See Block 5 entry.
 
 ### Decision: Prompts in lib/prompts.ts
 All system prompts are named exports in `/lib/prompts.ts`. Routes import them.

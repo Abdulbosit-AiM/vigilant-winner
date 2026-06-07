@@ -42,7 +42,7 @@
 
 | Milestone | Requirement |
 |-----------|-------------|
-| Public beta (v1) | NHS DSPT self-assessment; privacy notice; data processing agreement with Anthropic/OpenAI |
+| Public beta (v1) | NHS DSPT self-assessment; privacy notice; data processing agreements with the AI providers (Z.ai / Google) and Supabase |
 | NHS partnership | Clinical Safety Case (DCB0129); DTAC assessment |
 | NHS App integration | NHS login; IG toolkit submission |
 | CE/UKCA marking | Only required if classification changes to Class IIa+ device |

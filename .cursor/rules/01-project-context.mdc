@@ -12,12 +12,14 @@ NOT a diagnostic tool. NOT a replacement for clinicians. Communication bridge on
 
 ## Stack (locked — do not deviate)
 - Next.js 14 App Router + TypeScript (strict mode)
-- Anthropic Claude Sonnet (`claude-sonnet-4-6`) for generation
-- Anthropic Claude Haiku (`claude-haiku-4-5-20251001`) for RAG summarisation
-- `text-embedding-3-small` (OpenAI) for embeddings
-- In-memory vector store (no external DB)
-- OpenAI TTS API for audio
-- Zod for all schema validation
+- **GLM-5.1** (Z.ai, OpenAI-compatible via the `openai` SDK) — primary generation
+- **Gemini 2.5 Flash** — live fallback generation (`thinkingBudget: 0`, JSON mime)
+- Gemini `gemini-embedding-001` for embeddings (build-time → `data/corpus/index.json`)
+- In-memory vector store (no external vector DB; embeddings never in Supabase)
+- Gemini TTS (`gemini-2.5-flash-preview-tts`) for audio — PCM→WAV, base64 JSON
+- Gemini multimodal for STT (voice) and vision OCR (letter photos)
+- Supabase — text-only `corpus` backup + anonymous `events` (no auth, no PII)
+- Zod for all schema validation (`safeParse`, never a second LLM call)
 - Tailwind CSS for styling
 - Vercel for deploy
 
@@ -27,22 +29,29 @@ NOT a diagnostic tool. NOT a replacement for clinicians. Communication bridge on
   /api
     /express/route.ts     ← Express flow endpoint
     /interpret/route.ts   ← Interpret flow endpoint
-    /tts/route.ts         ← TTS audio endpoint
-  /page.tsx               ← Single-page app
+    /tts/route.ts         ← TTS audio endpoint (base64 WAV)
+    /stt/route.ts         ← STT endpoint (Gemini multimodal)
+    /ocr/route.ts         ← OCR endpoint (Gemini vision, image never logged)
+    /health/route.ts      ← live/mock status
+  /page.tsx               ← Single-page app (Express/Interpret tabs)
 /lib
   /redFlags.ts            ← Hardcoded red-flag list (EN + Mandarin)
   /urgencyGate.ts         ← detectRedFlag() pure function
   /rag.ts                 ← retrieveContext() + in-memory store
   /schemas.ts             ← All Zod output schemas
   /prompts.ts             ← All system prompts (no inline prompts in routes)
+  /glm.ts /gemini.ts      ← Typed clients with mock fallbacks
+  /generate.ts            ← GLM → Gemini fallback JSON generation
+  /rateLimit.ts           ← In-memory 10 req/min/IP
+  /demoFixtures.ts        ← DEMO_SAFE_MODE fixture loaders
 /components
   /ExpressFlow.tsx
   /InterpretFlow.tsx
   /EmergencyCard.tsx      ← Static, no LLM, full-screen
-  /UrgencyBadge.tsx
-  /AudioPlayer.tsx
+  /DeviceFrame.tsx        ← Phone-simulator shell (presentation only)
 /data
-  /corpus/                ← Pre-fetched NHS/Tommy's text chunks
+  /corpus/index.json      ← Embedded NHS/Tommy's chunks (build-time indexer)
+  /demo/                  ← Demo-safe fixtures + pre-recorded TTS clip
 ```
 
 ## Naming conventions

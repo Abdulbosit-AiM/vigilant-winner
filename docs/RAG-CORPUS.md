@@ -7,7 +7,7 @@
 
 - Fetch at build time only — no runtime fetching
 - Chunk size: 400 tokens, 50-token overlap
-- Embed: `text-embedding-3-small` (OpenAI)
+- Embed: `gemini-embedding-001` (Gemini) — via `npm run index:corpus` → `data/corpus/index.json`
 - Store: in-memory (no external vector DB for hackathon)
 - Label each chunk with: `source_name`, `source_url`, `topic`
 - Every RAG retrieval must surface `source_name` for inline citation

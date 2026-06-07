@@ -20,8 +20,9 @@ Do not skip the review step. It exists to catch issues before they compound.
 - [ ] Verify every stat in `pathways/4-maternity.md` §0 against primary sources
       (the MBRRACE-UK interpreter-failure + disparity numbers)
 - [ ] Lock team roles: who owns Express / who owns Interpret / who owns UI / who owns RAG
-- [ ] Confirm API keys available: Anthropic (Claude) · OpenAI (embeddings + TTS) · Vercel (deploy)
-- [ ] Create `.env.local` from `.env.example` with both keys (never commit)
+- [ ] Confirm API keys available: GLM (Z.ai, generation) · Gemini (fallback gen +
+      embeddings + TTS + STT + OCR) · Supabase (corpus/events) · Vercel (deploy)
+- [ ] Create `.env.local` from `.env.example` with the keys (never commit)
 - [ ] Confirm the repo runs and the `.cursor/rules/` (3 rules) load in Cursor
 
 ---
@@ -33,8 +34,8 @@ Do not skip the review step. It exists to catch issues before they compound.
 **→ REVIEW GATE:** No prior blocks. Read SETUP.md. Confirm `.cursor/rules/` is in project root. Confirm Cursor picks up all 3 rules.
 
 - [ ] Scaffold: `npx create-next-app@latest maternify --typescript --app`
-- [ ] Install deps: `@anthropic-ai/sdk openai ai`
-- [ ] Install RAG deps: `@xenova/transformers` or `openai` embeddings
+- [ ] Install deps: `openai` (SDK for the OpenAI-compatible GLM endpoint) ·
+      `@supabase/supabase-js` · `zod` (Gemini is called via fetch — no SDK)
 - [ ] Set up Vercel project + env vars in dashboard
 - [ ] Confirm Next.js dev server runs clean
 
@@ -72,9 +73,9 @@ Do not skip the review step. It exists to catch issues before they compound.
   1. Receive `{ symptom: string, language: 'zh' | 'en' }`
   2. Run `urgencyGate` first — if red flag → return emergency card payload (no LLM)
   3. RAG retrieval: top 3 chunks for symptom
-  4. Claude Sonnet call with strict system prompt (see health/SAFETY-GUARDRAILS.md for prompt constraints)
+  4. GLM call (Gemini live fallback) with strict system prompt (see health/SAFETY-GUARDRAILS.md for prompt constraints)
   5. Return structured JSON: `{ urgency, explanation_native, english_script, contact }`
-- [ ] Enforce output structure with Zod schema — reject malformed Claude responses
+- [ ] Enforce output structure with Zod schema — reject malformed model responses
 - [ ] Never return raw LLM text without schema validation
 - [ ] Latency check: non-urgent path < 8 seconds end-to-end
 
@@ -82,7 +83,7 @@ Do not skip the review step. It exists to catch issues before they compound.
 
 **→ REVIEW GATE:** Read `/api/express/route.ts`. Confirm: (1) `urgencyGate` called first, (2) Zod schema validates output, (3) no raw LLM text reaches client. Fix any issues BEFORE adding TTS. Measure Express latency in browser network tab — must be < 8s.
 
-- [ ] Create `/api/tts` route: receive `{ text: string }` → call OpenAI TTS → stream audio
+- [ ] Create `/api/tts` route: receive `{ text: string }` → Gemini TTS → wrap PCM as WAV → return base64 JSON (not a stream)
 - [ ] Add Play button to Express output card
 - [ ] Test: English script plays clearly through browser speakers
 - [ ] Test: audio starts < 1 second after generation completes
@@ -94,9 +95,9 @@ Do not skip the review step. It exists to catch issues before they compound.
 
 - [ ] Create `/api/interpret` route:
   1. Receive `{ content: string, language: 'zh' | 'en' }`
-  2. Claude Sonnet: identify document type
+  2. Identify document type (same GLM/Gemini generation call)
   3. RAG retrieval: relevant context for document type
-  4. Claude Haiku: generate explanation + next steps + questions
+  4. Generate explanation + next steps + questions (GLM, Gemini fallback)
   5. Return: `{ doc_type, explanation_native, next_steps, questions_en }`
 - [ ] Enforce output structure with Zod schema
 - [ ] Test with: screening result letter, scan report, appointment confirmation

@@ -9,13 +9,14 @@ alwaysApply: true
 
 ### In Scope (hackathon — locked)
 Express text input · Interpret text paste · Urgency signal · English script · TTS playback ·
-Mandarin → English only · Red-flag emergency card · RAG over 12 sources · Single-page web app · No login
+Mandarin → English only · Red-flag emergency card · RAG over the indexed corpus ·
+Single-page web app (phone-simulator shell) · No login ·
+**Bonus tier (shipped, cut first if behind):** STT voice input (Gemini multimodal, M4) ·
+OCR letter-photo upload (Gemini vision, M5 — image never logged/persisted)
 
 ### Hard rejections (refuse and explain why)
 | Request | Rejection reason |
 |---------|-----------------|
-| Voice / STT input | Out of scope. Web Speech API multilingual unreliable. Demo risk. |
-| OCR / photo upload | Out of scope. Separate problem. |
 | Cantonese support | Out of scope. Mandarin only for hackathon. |
 | User accounts / auth | Out of scope. Privacy complexity. |
 | Diagnosis output | Violates Safety Rule 1. Architectural breach. |
@@ -65,24 +66,22 @@ These rules are learned from common failure patterns. Apply them in every block:
 
 | Rule | Why |
 |------|-----|
-| Write the Zod schema before writing the Claude prompt | The prompt must produce a shape the schema can parse. Reverse order causes rework. |
+| Write the Zod schema before writing the generation prompt | The prompt must produce a shape the schema can parse. Reverse order causes rework. |
 | Test `urgencyGate()` with Mandarin strings before wiring Express route | Chinese character matching has edge cases (full-width punctuation, simplified vs traditional). |
 | Chunk RAG content to ~400 tokens at index time | Larger chunks hurt retrieval precision; smaller chunks lose context. |
-| Never stream Claude output to the client raw | Stream to server-side buffer → validate with Zod → send structured JSON. |
-| TTS endpoint must stream audio, not buffer it | Buffering causes > 1s delay. Use `Response` with `ReadableStream`. |
+| Never send model output to the client raw | Server-side `safeParse` with Zod → send structured JSON; fallback shape on failure. |
+| TTS returns base64 WAV in one JSON response, never a stream | Serverless streaming is unreliable; Gemini PCM is wrapped to WAV server-side (lib/wav.ts). Pre-recorded `/public/demo` clip backs the Play moment. |
 | Keep prompts in `/lib/prompts.ts` and import them | Inline prompts in route handlers make testing and review impossible. |
 
 ---
 
 ## Cursor Model Guidance
 
-Use Claude models (configured in Cursor model selector) for all generation tasks in this project.
-This keeps the Cursor development context consistent with the production Anthropic API stack.
-
 For Cursor chat / composer tasks:
-- **Architecture decisions, review, debugging** → use the most capable model available (Opus / Sonnet)
-- **Quick edits, boilerplate, type fixes** → use a faster model (Haiku / Flash equivalent)
+- **Architecture decisions, review, debugging** → use the most capable model available
+- **Quick edits, boilerplate, type fixes** → use a faster model
 
-> Note: If team wants to use "GLM 5.1" — confirm exact model ID and add as custom API provider in
-> Cursor Settings → Models → Add Model. For Mandarin-heavy tasks, a Chinese-language-optimised
-> model may improve explanation quality. Route Mandarin generation through that model if available.
+> Production generation stack (do not confuse with Cursor's dev models): **GLM-5.1**
+> (Z.ai, `GLM_MODEL`/`GLM_BASE_URL` in env) primary, **Gemini 2.5 Flash** live
+> fallback. GLM is Chinese-language-optimised — a deliberate fit for the
+> Mandarin-heavy generation in this product.

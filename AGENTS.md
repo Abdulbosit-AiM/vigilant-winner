@@ -41,8 +41,10 @@ technically credible, scoped to finish in 24h.
 - Disclaimers visible on screen; every clinical claim cites a named NHS/Tommy's source.
 
 ## Environment
-- macOS / Linux + bash. See `docs/SETUP.md`. Two secrets only: `ANTHROPIC_API_KEY`,
-  `OPENAI_API_KEY`. No database, no auth in the hackathon build.
+- macOS / Linux + bash. See `docs/SETUP.md`. Secrets: `GLM_API_KEY`,
+  `GEMINI_API_KEY`, `SUPABASE_URL` + `SUPABASE_PUBLISHABLE_KEY` (or legacy
+  `SUPABASE_ANON_KEY`); plus `DEMO_SAFE_MODE`. No auth, no PII — Supabase holds
+  only corpus text + anonymous events.
 - The `../hackathon/scripts/*.ps1` are Windows-only — **do not run them here.**
 - Cursor agent constraints live in `.cursor/rules/` (3 always-active rules).
 

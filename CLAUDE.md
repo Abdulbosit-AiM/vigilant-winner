@@ -121,26 +121,35 @@ Chosen for speed-to-ship, not long-term scale. Full spec: `docs/TECH-STACK.md`.
 
 - **Frontend/app:** Next.js 14 (App Router) + TypeScript (strict) + Tailwind.
   Single-page, mobile-first, **no login**. API routes = no separate backend.
-- **AI — generation:** Anthropic **Claude Sonnet** (`claude-sonnet-4-6`) for Express
-  generation; **Claude Haiku** (`claude-haiku-4-5-20251001`) for RAG summarisation.
-  Wrap every call so it can fall back to a saved example if credentials/network fail
-  mid-demo (Section 7, mocking rule).
-- **RAG:** `text-embedding-3-small` (OpenAI) over **12 curated NHS/Tommy's pages**
-  (`docs/RAG-CORPUS.md`), indexed at build time into an **in-memory vector store**
-  (JS array + cosine similarity — no external vector DB to provision).
-- **TTS:** OpenAI TTS API (`tts-1`) — streams the English script as audio so the
-  clinician can hear it directly. **This is the demo moment.**
-- **Validation:** **Zod** schema on every LLM output — no raw model text ever
+- **AI — generation:** **GLM-5.1** (Z.ai, OpenAI-compatible endpoint) as the primary
+  generator; **Gemini 2.5 Flash** as the live fallback (`lib/generate.ts`). Every
+  call degrades to a saved, labelled fixture if credentials/network/quota fail
+  mid-demo (Section 7, mocking rule; `DEMO_SAFE_MODE`).
+- **RAG:** Gemini `gemini-embedding-001` over the curated **NHS/Tommy's corpus**
+  (`docs/RAG-CORPUS.md`), indexed at build time (`npm run index:corpus`) into
+  `data/corpus/index.json`, loaded as an **in-memory vector store** (JS array +
+  cosine similarity — no external vector DB).
+- **TTS:** Gemini TTS (`gemini-2.5-flash-preview-tts`, a separate model id) — the
+  English script as audio so the clinician can hear it directly. Raw PCM is
+  server-wrapped into WAV and returned as **base64 JSON** (not a stream).
+  **This is the demo moment** — a pre-recorded clip in `/public/demo` backs it.
+- **STT (bonus, shipped M4):** Gemini multimodal `generateContent` — voice input
+  feeds Express. **OCR (bonus, M5):** Gemini vision — letter photo feeds Interpret.
+- **Validation:** **Zod** `safeParse` on every LLM output — no raw model text ever
   reaches the client (`docs/health/SAFETY-GUARDRAILS.md`).
-- **No database, no auth in the hackathon build.** No PII stored server-side.
-  (Production path → pgvector/Pinecone + NHS Login; see `docs/TECH-STACK.md`.)
+- **Data: Supabase, but no auth and no PII.** Holds only the public corpus text
+  (backup) and **anonymous** events; embeddings never go in the DB; never the
+  service-role key in client code. (Production path → pgvector + NHS Login; see
+  `docs/TECH-STACK.md`.)
 - **Deploy:** Vercel (zero-config Next.js).
 - **Environment:** macOS / Linux. The `../hackathon/scripts/*.ps1` helpers are
   **Windows/PowerShell only** — do not run them here. Use the bash equivalents in
   `docs/SETUP.md` / `scripts/` instead.
 
-Two secrets only: `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`. Keep dependencies minimal.
-Add a library only when it clearly saves time.
+Secrets: `GLM_API_KEY`, `GEMINI_API_KEY`, `SUPABASE_URL` +
+`SUPABASE_PUBLISHABLE_KEY` (or legacy `SUPABASE_ANON_KEY`); plus the
+`DEMO_SAFE_MODE` switch. Keep dependencies minimal. Add a library only when it
+clearly saves time.
 
 ---
 
@@ -151,19 +160,22 @@ in-scope table + acceptance criteria; `docs/health/SAFETY-GUARDRAILS.md` has the
 hardcoded rules). Build these two flows and **nothing else** for the hackathon.
 
 **Flow A — Express** (symptom → English script + TTS):
-1. User inputs a symptom in Mandarin or English (**text only** — no STT).
+1. User inputs a symptom in Mandarin or English — typed, or spoken via the mic
+   (Gemini STT, bonus tier; degrades to "type instead").
 2. **Red-flag gate runs first** — a pure synchronous function over a hardcoded
    keyword list (EN + Mandarin). On a red-flag it **bypasses all LLM generation**
    and shows the static emergency card (999 / 111, one-tap call). < 500ms.
-3. Non-urgent → RAG retrieval (top chunks) → Claude generation → a **Zod-validated**
+3. Non-urgent → RAG retrieval (top chunks) → GLM generation (Gemini fallback) → a **Zod-validated**
    structured output: urgency level (Immediate / Today / Next appointment) +
    plain-language explanation (Mandarin) with a named NHS source + an **English
    script** + contact type.
 4. **TTS** plays the English script aloud — she can hold the phone up to her midwife.
 
 **Flow B — Interpret** (NHS letter → plain language):
-1. User pastes NHS correspondence text (**text only** — no OCR/photo in hackathon).
-2. Claude identifies the document type, grounds it in RAG, and returns: a
+1. User pastes NHS correspondence text, or photographs the letter (Gemini OCR,
+   bonus tier; extracted text is shown for confirmation, unreadable photos fall
+   back to "type/paste instead"; the image is never logged or persisted).
+2. The model identifies the document type, grounds it in RAG, and returns: a
    plain-language explanation (Mandarin + English) + numbered next steps +
    questions to ask at the next appointment.
 
@@ -185,8 +197,8 @@ Use" and 20% "Real-World Value" outright. Full detail, the verbatim system-promp
 block, the red-flag term lists, and the Zod schemas are in
 `docs/health/SAFETY-GUARDRAILS.md`.
 
-**The 5 hardcoded rules** (every Claude system prompt includes these verbatim — do
-not paraphrase):
+**The 5 hardcoded rules** (every generation system prompt — GLM or Gemini —
+includes these verbatim; do not paraphrase):
 
 1. **Never produce a diagnostic conclusion.** May describe what a symptom *may*
    indicate and recommend a clinical action; may not state what the user has.
@@ -209,8 +221,8 @@ Structural enforcement (safety by architecture, not by disclaimer):
   pain → static emergency card (999 / maternity triage / 111). **Never reassure
   away a red-flag** — the exact failure mode MBRRACE-UK documents. Tested and
   unmistakable before demo.
-- **Zod on every LLM output.** If Claude's response fails validation, return a safe
-  fallback — **never raw model text** to the client.
+- **Zod on every LLM output.** If the model's response fails validation, return a
+  safe fallback — **never raw model text** to the client.
 - **Prompt-injection defence.** System prompt is hardcoded server-side; user input
   is passed as a `role: 'user'` turn only, never interpolated into the system
   prompt string. `dangerouslySetInnerHTML` is banned.
@@ -238,24 +250,23 @@ Do not optimise for the most tools loaded. Optimise for the fewest active
 resources that unblock the current phase. Full rationale: `../hackathon/mcp-policy.md`.
 Curated, grounded recommendations for THIS project: **`docs/TOOLS.md`** (read it).
 
-**Default active set:** editor + GitHub MCP (repo is remote-backed) + web search
-for research. **No Supabase** — the hackathon build has no database (in-memory RAG
-+ no auth). Everything else off until its phase.
+**Default active set:** editor + GitHub MCP (repo is remote-backed) + Supabase MCP
+(corpus text backup + anonymous events — no auth, no PII, no embeddings in the DB)
++ web search for research. Everything else off until its phase.
 
 **Health-relevant MCPs for this pathway** (connect only when needed — see
 `docs/TOOLS.md`):
 - **PubMed** — evidence to back clinical claims (MBRRACE-UK framing, red-flag logic).
 
-The **NHS Website Content API** (grounding the 12-source RAG corpus and red-flag
-copy) and **NHS Service Search API** (signposting to a real local maternity service)
-are REST APIs called from app code, not MCPs — see `docs/health/NHS-RESOURCES.md`
-and `docs/RAG-CORPUS.md`. **OpenAI** (embeddings + TTS) is a REST dependency, not an
-MCP. Tools for the unchosen pathways (Strava, ICD-10, NPI Registry, QRISK3) are
-**dropped** — do not connect them.
+The RAG corpus is scraped from **public NHS/Tommy's pages** at build time (no NHS
+API key — see `docs/RAG-CORPUS.md` and `scripts/index-corpus.ts`). **GLM (Z.ai)**
+and **Gemini** (generation fallback, embeddings, TTS, STT, OCR) are REST
+dependencies called from app code, not MCPs. Tools for the unchosen pathways
+(Strava, ICD-10, NPI Registry, QRISK3) are **dropped** — do not connect them.
 
-**Build MCPs we actually use:** GitHub (version safety), Figma (UI mockups), Canva
-(pitch graphics, Phase 6 only). Cloudflare and Hugging Face are available in-session
-but **not needed** for this build — leave them idle. (No Supabase: no DB this build.)
+**Build MCPs we actually use:** GitHub (version safety), Supabase (corpus/events
+tables), Figma (UI mockups), Canva (pitch graphics, Phase 6 only). Cloudflare and
+Hugging Face are available in-session but **not needed** for this build — leave them idle.
 Skills: `deep-research` (Phase 1 evidence), `design:user-research`,
 `design:ux-copy`, `design:accessibility-review`, `docx`/`pptx`/`pdf` for
 submission material.
@@ -294,6 +305,7 @@ vigilant-winner/
 ├─ CLAUDE.md                      ← you are here (the contract)
 ├─ README.md                      ← public submission readme
 ├─ AGENTS.md                      ← short agent contract for code owners
+├─ BUILD-PLAN.md                  ← ordered milestones M0–M6 (the executable PRD)
 ├─ .env.example                   ← required env vars (never commit real .env.local)
 ├─ .cursor/rules/                 ← always-active Cursor agent constraints (3 rules)
 ├─ docs/
@@ -313,7 +325,11 @@ vigilant-winner/
 │     ├─ SAFETY-GUARDRAILS.md     ← 5 hardcoded rules, red-flag lists, Zod schemas
 │     ├─ COMPLIANCE.md            ← regulatory position (Class 0) + GDPR + prod path
 │     └─ NHS-RESOURCES.md         ← real, cited NHS/UK endpoints & helplines
-└─ (app code added in Phase 2/3)
+├─ app/                           ← Next.js App Router (page + /api routes)
+├─ components/                    ← ExpressFlow, InterpretFlow, EmergencyCard, DeviceFrame
+├─ lib/                           ← gate, schemas, prompts, clients, rag, rateLimit (+ tests)
+├─ data/                          ← corpus/index.json + demo fixtures/audio
+└─ scripts/                       ← index-corpus.ts, gen-demo-audio.ts
 ```
 
 ## 11. Sources of truth (precedence order)

@@ -11,10 +11,10 @@ Zod schemas, prompt-injection defence) are the build artefacts.
 
 ---
 
-## 0. The 5 hardcoded rules — verbatim in every Claude system prompt
+## 0. The 5 hardcoded rules — verbatim in every generation system prompt
 
 > **Do not paraphrase. Do not abbreviate. These ship in the system prompt of every
-> generation call exactly as written.**
+> generation call (GLM and Gemini alike) exactly as written.**
 
 ```
 SAFETY RULES — ENFORCE ON EVERY OUTPUT:
@@ -106,8 +106,9 @@ On screen, not buried in a footer or a ToS:
 
 ## 5. Privacy by default — and make it visible
 
-The hackathon build stores **no PII server-side** and ships **no database** (in-memory
-RAG, no auth, no login). Privacy here is "we don't keep anything," shown plainly.
+The hackathon build stores **no PII server-side** and has **no auth, no login**
+(in-memory RAG; Supabase holds only public corpus text + anonymous events).
+Privacy here is "we don't keep anything about you," shown plainly.
 
 - **Minimal capture:** collect only what the flow needs; nothing persisted.
 - **Explicit notice:** tell the user, in plain words, that her input is not stored.

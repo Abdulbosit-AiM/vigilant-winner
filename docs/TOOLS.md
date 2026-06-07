@@ -14,21 +14,21 @@ Legend: ✅ available in this session · 🔌 connect via MCP registry when need
 
 | Tool | Type | Why it's must-have | Phase |
 | --- | --- | --- | --- |
-| **Anthropic Claude API** | external (app code) | The central AI capability: Sonnet for Express generation, Haiku for RAG summarisation. Worry → grounded English script + urgency; letter → explanation. Wrap with a mock fallback for demo safety. | 3–6 |
-| **OpenAI API** | external (app code) | Two jobs: `text-embedding-3-small` for the **in-memory RAG** index, and **TTS** for the English-script audio (**the demo moment**). | 3–5 |
+| **GLM-5.1 (Z.ai)** | external (app code) | The primary generator: worry → grounded English script + urgency; letter → explanation. OpenAI-compatible endpoint; degrades to Gemini, then to labelled fixtures (`DEMO_SAFE_MODE`). | 3–6 |
+| **Gemini API** | external (app code) | Four jobs: live fallback generation, `gemini-embedding-001` for the **in-memory RAG** index, **TTS** for the English-script audio (**the demo moment**), and multimodal **STT/OCR**. | 3–5 |
+| **Supabase** ✅ | MCP | `corpus` (text-only backup) + `events` (anonymous) tables. **No auth, no PII, no embeddings in the DB.** | 2–4 |
 | **Zod** | lib | Schema-validate **every** LLM output — no raw model text to the client. The structural half of the safety story. Write the schema before the prompt. | 3–6 |
-| **NHS Website Content API** | REST (app code) | Official NHS.uk pregnancy content — the source for the **12-page RAG corpus** (`docs/RAG-CORPUS.md`) and red-flag copy. *Not an MCP.* | 3–4 |
-| **NHS Service Search API** | REST (app code) | Find a **real local maternity service** for signposting. Free, needs subscription key. *Not an MCP.* See `docs/health/NHS-RESOURCES.md`. | 4 |
+| **NHS/Tommy's public pages** | scrape (build time) | The RAG corpus source (`docs/RAG-CORPUS.md`): `scripts/index-corpus.ts` scrapes, chunks, and embeds the public pages — **no NHS API key needed**. 8 of 12 sources live post-migration. | 3–4 |
+| **NHS Service Search API** | REST (app code) | Find a **real local maternity service** for signposting — production path; signposting copy in the hackathon build is static/cited. *Not an MCP.* See `docs/health/NHS-RESOURCES.md`. | 4 |
 | **GitHub** ✅ | MCP | Repo is remote-backed (`Abdulbosit-AiM/vigilant-winner`). Issues, PRs, CI context, version safety during a fast build. | 0–6 |
 | **Web search** ✅ | core | Ground every health claim with NHS / NICE / MBRRACE-UK data. 65% of the score is non-technical and evidence-driven. | 1, 5 |
 | **`deep-research`** 🧩 | skill | One pass to nail the evidence base: MBRRACE-UK interpreter-failure + disparity stats, pregnancy red-flag guidance (NICE/RCOG via NHS framing). | 1 |
 | **`docx` / `pptx` / `pdf`** 🧩 | skill | Submission material: one-page product narrative, pitch, demo backup deck. | 6 |
 
-> **No Supabase / no database this build.** The earlier cut used Postgres + RLS for
-> a concern/question-history trail; under the v0.2 reconcile the hackathon build
-> stores **no PII server-side** (privacy = "we keep nothing"). A clinician-readable
-> trail with per-user isolation (Postgres + RLS) returns on the production path
-> (`docs/health/COMPLIANCE.md`).
+> **Supabase, but no user data.** The build ships **no auth and no PII** (privacy =
+> "we keep nothing about you"); Supabase holds only the public corpus text backup
+> and anonymous events. A clinician-readable trail with per-user isolation
+> (Postgres + RLS) returns on the production path (`docs/health/COMPLIANCE.md`).
 
 **Verification/quality (impl owner, during hardening):** the ECC control plane
 exposes `/plan`, `/tdd`, `/code-review`, `/verify`, `/e2e`, `/build-fix` (see
@@ -65,12 +65,11 @@ Dropped with the pathway decision (6 June 2026). **Do not connect these.**
 - **NPI Registry** 🔌 — US provider IDs, never applicable to the NHS. Gone.
 - **bioRxiv / medRxiv** 🔌 — preprints, not peer-reviewed; PubMed covers our
   evidence needs. Gone.
-- **`docx`/`pdf` letter parsing (file upload / OCR)** — was the NHS Admin core
-  mechanic. The skills stay (for submission material). Note: the **Interpret** flow
-  *does* decode NHS letters, but from **pasted text only** — no file upload or OCR
-  in the hackathon build (`docs/pathways/4-maternity.md` §4 out-of-scope).
-- **Hugging Face** ✅ — no specialised open model needed for this build; Claude
-  covers the AI layer. Leave disconnected unless a concrete need appears.
+- **`docx`/`pdf` letter parsing skills** — were the NHS Admin core mechanic. The
+  skills stay (for submission material). The **Interpret** flow decodes NHS letters
+  from pasted text or a **letter photo via Gemini OCR** (M5) — no docx/pdf parsing.
+- **Hugging Face** ✅ — no specialised open model needed for this build; GLM/Gemini
+  cover the AI layer. Leave disconnected unless a concrete need appears.
 
 ---
 
