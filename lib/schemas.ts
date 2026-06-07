@@ -106,3 +106,40 @@ export type InterpretResponse =
   | InterpretOutput
   | ExpressEmergency
   | InterpretFallback;
+
+/**
+ * Cultural-context resolution (Priority 1). The MODEL returns the resolution
+ * fields; the disclaimer is added deterministically server-side.
+ */
+export const CultureModelSchema = z.object({
+  literal: z.string().min(1),
+  clinical_referent: z.string().min(1),
+  context: z.string().min(1),
+  explanation_source: z.string().min(1),
+});
+export type CultureModel = z.infer<typeof CultureModelSchema>;
+
+/** Final validated Culture payload returned to the client. */
+export const CultureOutputSchema = z.object({
+  kind: z.literal("culture"),
+  idiom: z.string().min(1),
+  literal: z.string().min(1),
+  clinical_referent: z.string().min(1),
+  context: z.string().min(1),
+  explanation_source: z.string().min(1),
+  disclaimer: DisclaimerSchema,
+});
+export type CultureOutput = z.infer<typeof CultureOutputSchema>;
+
+/** Safe fallback when Culture generation fails or output fails validation. */
+export const CultureFallbackSchema = z.object({
+  kind: z.literal("fallback"),
+  message: z.string().min(1),
+  disclaimer: DisclaimerSchema,
+});
+export type CultureFallback = z.infer<typeof CultureFallbackSchema>;
+
+export type CultureResponse =
+  | CultureOutput
+  | ExpressEmergency
+  | CultureFallback;

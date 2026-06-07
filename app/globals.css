@@ -1,15 +1,174 @@
+/* ============================================================
+   MATERNIFY — Warm Clinical Modernism
+   Design tokens: teal/cream/coral, DM Sans + Noto Sans SC
+   (ported from the maternify-demo design reference)
+   ============================================================ */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
   color-scheme: light;
+
+  /* Font families (loaded via <link> in app/layout.tsx) */
+  --font-dm-sans: "DM Sans";
+  --font-noto-sc: "Noto Sans SC";
+
+  /* Maternify palette */
+  --teal: oklch(0.48 0.09 195);
+  --teal-light: oklch(0.88 0.04 195);
+  --coral: oklch(0.60 0.18 30);
+  --gold: oklch(0.68 0.12 65);
+  --cream: oklch(0.98 0.012 85);
+  --emergency: oklch(0.52 0.22 25);
+
+  /* Radius scale (consumed by .mat-card etc.) */
+  --radius: 0.75rem;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  /* shadcn semantic tokens */
+  --background: oklch(0.985 0.008 85);
+  --foreground: oklch(0.22 0.02 200);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.22 0.02 200);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.22 0.02 200);
+  --primary: oklch(0.48 0.09 195);
+  --primary-foreground: oklch(0.98 0.008 85);
+  --secondary: oklch(0.94 0.02 195);
+  --secondary-foreground: oklch(0.36 0.07 195);
+  --muted: oklch(0.95 0.008 85);
+  --muted-foreground: oklch(0.52 0.02 200);
+  --accent: oklch(0.94 0.02 195);
+  --accent-foreground: oklch(0.36 0.07 195);
+  --destructive: oklch(0.52 0.22 25);
+  --destructive-foreground: oklch(0.98 0 0);
+  --border: oklch(0.90 0.012 85);
+  --input: oklch(0.92 0.012 85);
+  --ring: oklch(0.48 0.09 195);
 }
 
-html,
-body {
-  padding: 0;
-  margin: 0;
-  background: #f1f5f9;
-  -webkit-font-smoothing: antialiased;
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  html,
+  body {
+    padding: 0;
+    margin: 0;
+  }
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-dm-sans), "Noto Sans SC", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  :lang(zh),
+  .zh {
+    font-family: var(--font-noto-sc), "Noto Sans SC", var(--font-dm-sans),
+      system-ui, sans-serif;
+  }
+}
+
+@layer components {
+  /* Maternify utility classes */
+  .mat-card {
+    background: white;
+    border-radius: var(--radius-xl);
+    box-shadow: 0 2px 12px oklch(0.22 0.02 200 / 0.08),
+      0 1px 3px oklch(0.22 0.02 200 / 0.06);
+  }
+  .mat-card-teal {
+    background: oklch(0.94 0.04 195);
+    border-radius: var(--radius-xl);
+  }
+  .urgency-low {
+    background: oklch(0.92 0.08 150);
+    color: oklch(0.32 0.10 150);
+  }
+  .urgency-mid {
+    background: oklch(0.94 0.10 65);
+    color: oklch(0.40 0.12 65);
+  }
+  .urgency-high {
+    background: oklch(0.94 0.12 30);
+    color: oklch(0.42 0.18 30);
+  }
+  .urgency-emergency {
+    background: oklch(0.52 0.22 25);
+    color: white;
+  }
+
+  /* Bilingual label pair */
+  .bilingual-zh {
+    font-family: "Noto Sans SC", sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: oklch(0.22 0.02 200);
+  }
+  .bilingual-en {
+    font-family: "DM Sans", sans-serif;
+    font-weight: 400;
+    font-size: 0.8rem;
+    color: oklch(0.52 0.02 200);
+    margin-top: 1px;
+  }
+
+  /* Slide-up animation for result cards */
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .slide-up {
+    animation: slideUp 220ms cubic-bezier(0.23, 1, 0.32, 1) both;
+  }
+
+  @keyframes emergencyShake {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    20% {
+      transform: translateX(-6px);
+    }
+    40% {
+      transform: translateX(6px);
+    }
+    60% {
+      transform: translateX(-4px);
+    }
+    80% {
+      transform: translateX(4px);
+    }
+  }
+  .emergency-shake {
+    animation: emergencyShake 400ms ease-out both;
+  }
+
+  /* Tab bar active indicator */
+  .tab-active {
+    color: oklch(0.48 0.09 195);
+  }
+  .tab-inactive {
+    color: oklch(0.60 0.02 200);
+  }
+
+  /* Hide scrollbar on the horizontal date strip */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 }
