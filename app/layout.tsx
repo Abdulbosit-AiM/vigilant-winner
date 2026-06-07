@@ -9,9 +9,9 @@ export const metadata: Metadata = {
   description:
     "Express your maternity symptoms clearly and understand NHS letters — support, not diagnosis.",
   icons: {
-    icon: "/favicon.webp",
-    shortcut: "/favicon.webp",
-    apple: "/favicon.webp",
+    icon: "/favicon.png",
+    shortcut: "/favicon.png",
+    apple: "/favicon.png",
   },
 };
 

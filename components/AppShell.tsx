@@ -20,8 +20,8 @@ function TopBar() {
     >
       <div className="flex items-center gap-2">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/favicon.webp" alt="" className="h-6 w-6" />
-        <span className="text-base font-bold tracking-tight text-foreground">
+        <img src="/favicon.png" alt="" className="h-8 w-8" />
+        <span className="text-lg font-bold tracking-tight text-foreground">
           Maternify
         </span>
       </div>
