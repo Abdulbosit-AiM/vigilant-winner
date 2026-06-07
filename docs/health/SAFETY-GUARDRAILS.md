@@ -196,25 +196,43 @@ const RED_FLAG_TERMS_ZH = [
   '大量出血', '阴道出血', '破水', '羊水流出', '液体流出',     // Bleeding / waters
   '胸痛', '呼吸困难', '晕倒', '抽搐',                      // Other
 ]
+
+// Hindi, Urdu and Polish lists mirror the same clinical categories
+// (fetal movement, pre-eclampsia, bleeding, waters, other emergencies) —
+// full lists live in lib/redFlags.ts (RED_FLAG_TERMS_HI / _UR / _PL).
+// Polish matching also runs a diacritic-folded pass ("bol glowy" matches
+// "ból głowy") — see lib/urgencyGate.ts.
 ```
 
 > Mandarin matching has edge cases — full-width punctuation, simplified vs
 > traditional variants. Test the gate with Chinese strings before wiring Express.
+>
+> ⚠ The Hindi, Urdu and Polish term lists and emergency-card copy are
+> good-faith translations added 7 June 2026 — **verify with native speakers
+> before claiming clinical coverage in those languages.** The gate checks every
+> language list on every input, so adding a language only ever ADDS detection.
 
 ---
 
 ## Appendix B — Emergency card (static, no LLM — `EmergencyCard.tsx`)
 
 ```typescript
+// lib/emergencyCard.ts — static constants, no model text.
+// Copy ships for every supported language; the card shows English plus the
+// user's selected language (Record<NativeLang, …> makes a missing language a
+// compile error, not a silent gap).
 const EMERGENCY_CARD = {
   type: 'emergency',
-  action: 'Call 999 or go to A&E immediately',
-  reason_en: 'Your symptoms need urgent medical attention.',
-  reason_zh: '您的症状需要紧急医疗护理。',
-  cta: 'tel:999',
-  cta_label: 'Call 999',
-  secondary_cta: 'tel:111',
-  secondary_label: 'Or call NHS 111',
+  en: {
+    headline: 'Call 999 or go to A&E now',
+    body: 'Your symptoms need urgent medical attention.',
+    maternity_note: '… call your maternity unit or triage line now …',
+    primary_label: 'Call 999',
+    secondary_label: 'Or call NHS 111',
+  },
+  native: { zh: {…}, hi: {…}, ur: {…}, pl: {…} },   // same five fields each
+  primary_tel: 'tel:999',
+  secondary_tel: 'tel:111',
   disclaimer: 'This is not medical advice. Always confirm with your midwife or doctor.',
 }
 ```

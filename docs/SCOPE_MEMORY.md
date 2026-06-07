@@ -238,6 +238,21 @@ Risk for next block (deploy + final checks): HUMAN TODOs — pre-record the scre
 
 ---
 
+### Block 12.5 — Language expansion (Hindi, Urdu, Polish) · COMPLETE
+Built:
+- `lib/languages.ts` (new) — single source of truth: `LANGS = en/zh/hi/ur/pl`, selector labels in native script, RTL list (ur), shared `resolveLang` script heuristic (CJK/Devanagari/Arabic/Polish-diacritics) replacing the duplicated per-route copies.
+- `lib/redFlags.ts` — RED_FLAG_TERMS_HI/_UR/_PL mirroring the same clinical categories as EN/ZH; `lib/urgencyGate.ts` now loops over EVERY language list on every input + a diacritic-folded Polish pass ("silny bol glowy" matches "silny ból głowy"; ł→l handled manually, NFD doesn't decompose it).
+- Emergency card restructured: `en` + `native: Record<NativeLang, copy>` — a missing language is a compile error. `EmergencyCard.tsx` takes `lang`, shows EN + the selected language, `dir="rtl"` for Urdu. `data/demo/redflag.json` regenerated to the new shape.
+- Full UI dictionaries (hi/ur/pl) in both flows, 5-pill selector mapped from LANGS, `dir="auto"` on textareas and native-text blocks; prompts' LANGUAGE mapping extended.
+- Tests: gate red-flag + benign cases ×3 languages + deaccented-Polish case; card completeness per language. 67 tests green; lint + build green.
+Worked: gate-checks-all-lists invariant means adding a language can only ADD detection — no regression risk to the zh demo path; the existing demo scenario behaviour is unchanged (verified: S3 card still EN+ZH when zh selected).
+Struggled: nothing structural; the EmergencyCardData shape change rippled to fixture + 2 tests, contained.
+Learned: keep language plumbing in one module — both routes had drifted copies of resolveLang.
+Deviated: spec said Mandarin-only build; human (decision owner) requested the extra languages explicitly.
+Risk for next block: ⚠ hi/ur/pl red-flag terms + emergency-card copy are good-faith translations — get native-speaker eyes before claiming clinical coverage in those languages at the pitch (flagged in SAFETY-GUARDRAILS Appendix A). Demo stays on the verified zh scenarios.
+
+---
+
 ### Block 13 — Final Checks · PENDING
 Built: —
 Worked: —

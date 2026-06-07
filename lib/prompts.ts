@@ -40,7 +40,7 @@ Respond with ONLY a single JSON object (no markdown, no code fences, no commenta
 {
   "urgency": one of "immediate" | "today" | "next_appointment",
   "urgency_label": short localized label in the user's language describing the action (e.g. "Contact your midwife today"),
-  "explanation_native": plain-language explanation in the user's language (the LANGUAGE given in the user message: "zh" = Simplified Chinese, "en" = English). Reading age ~9–11. No diagnosis, no reassurance.
+  "explanation_native": plain-language explanation in the user's language (the LANGUAGE given in the user message: "zh" = Simplified Chinese, "hi" = Hindi, "ur" = Urdu, "pl" = Polish, "en" = English). Reading age ~9–11. No diagnosis, no reassurance.
   "explanation_source": the NHS/Tommy's source NAME you grounded this in (non-empty),
   "english_script": a short first-person English script she can speak or play to her clinician describing the symptom and asking to be seen — always in English regardless of her language.
 }
@@ -66,7 +66,7 @@ OUTPUT FORMAT:
 Respond with ONLY a single JSON object (no markdown, no code fences, no commentary) with EXACTLY these fields:
 {
   "document_type": a short label for what the document is (e.g. "first-trimester screening result", "glucose tolerance test result", "appointment letter"),
-  "explanation_native": plain-language explanation in the user's language (the LANGUAGE given in the user message: "zh" = Simplified Chinese, "en" = English). Reading age ~9–11. Say what the letter means, not what she has. No diagnosis, no reassurance.
+  "explanation_native": plain-language explanation in the user's language (the LANGUAGE given in the user message: "zh" = Simplified Chinese, "hi" = Hindi, "ur" = Urdu, "pl" = Polish, "en" = English). Reading age ~9–11. Say what the letter means, not what she has. No diagnosis, no reassurance.
   "explanation_en": the same plain-language explanation in English.
   "explanation_source": the NHS/Tommy's source NAME you grounded this in (non-empty),
   "next_steps": an array of 1 to 4 short, concrete next steps she can take (e.g. attend an appointment, contact her midwife). No diagnosis, no reassurance.

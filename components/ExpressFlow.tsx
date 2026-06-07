@@ -4,8 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import EmergencyCard from "@/components/EmergencyCard";
 import type { EmergencyCardData } from "@/lib/emergencyCard";
 import { blobToWavBase64 } from "@/lib/audioClient";
-
-type Lang = "zh" | "en";
+import { LANGS, LANG_LABELS, RTL_LANGS, type Lang } from "@/lib/languages";
 
 /** Static fallback so the Play moment never depends on a live call (PRD §11.8). */
 const DEMO_AUDIO_URL = "/demo/express-script.wav";
@@ -95,7 +94,85 @@ const UI = {
     transcribing: "转写中…",
     sttFailed: "无法转写——请改为输入文字。",
   },
-} as const;
+  hi: {
+    title: "लक्षण बताएं",
+    subtitle:
+      "बताइए कि आप कैसा महसूस कर रही हैं। हम आपको अंग्रेज़ी में एक स्क्रिप्ट देंगे जो आप अपनी मिडवाइफ़ को दिखा सकती हैं।",
+    placeholder: "जैसे: मुझे हल्का कमर दर्द है",
+    submit: "मेरी स्क्रिप्ट पाएं",
+    loading: "तैयार हो रहा है…",
+    urgencyHeading: "कितना ज़रूरी",
+    scriptHeading: "यह अपनी मिडवाइफ़ को कहें या सुनाएं",
+    contactHeading: "किससे संपर्क करें",
+    sourceHeading: "आधार",
+    privacy: "आपकी बातें सेव नहीं होतीं।",
+    again: "फिर से शुरू करें",
+    error: "कुछ गड़बड़ हुई। कृपया दोबारा कोशिश करें।",
+    genGlm: "GLM-5.1 द्वारा जनरेट किया गया",
+    genGemini: "Gemini द्वारा जनरेट किया गया (बैकअप)",
+    offline: "उदाहरण (ऑफ़लाइन)",
+    play: "मिडवाइफ़ को सुनाएं",
+    preparingAudio: "ऑडियो तैयार हो रहा है…",
+    playing: "चल रहा है…",
+    demoLabel: "उदाहरण ऑडियो (ऑफ़लाइन)",
+    mic: "बोलकर बताएं",
+    recording: "रिकॉर्डिंग — रोकने के लिए टैप करें",
+    transcribing: "लिखा जा रहा है…",
+    sttFailed: "आवाज़ समझ नहीं आई — कृपया टाइप करें।",
+  },
+  ur: {
+    title: "علامت بتائیں",
+    subtitle:
+      "بتائیں کہ آپ کیسا محسوس کر رہی ہیں۔ ہم آپ کو انگریزی میں ایک اسکرپٹ دیں گے جو آپ اپنی مڈوائف کو دکھا سکتی ہیں۔",
+    placeholder: "مثلاً: مجھے ہلکا کمر درد ہے",
+    submit: "میری اسکرپٹ حاصل کریں",
+    loading: "تیار ہو رہا ہے…",
+    urgencyHeading: "کتنا فوری",
+    scriptHeading: "یہ اپنی مڈوائف کو کہیں یا سنائیں",
+    contactHeading: "کس سے رابطہ کریں",
+    sourceHeading: "ماخذ",
+    privacy: "آپ کی باتیں محفوظ نہیں ہوتیں۔",
+    again: "دوبارہ شروع کریں",
+    error: "کچھ غلط ہوا۔ براہ کرم دوبارہ کوشش کریں۔",
+    genGlm: "GLM-5.1 سے تیار کردہ",
+    genGemini: "Gemini سے تیار کردہ (متبادل)",
+    offline: "مثال (آف لائن)",
+    play: "مڈوائف کو سنائیں",
+    preparingAudio: "آڈیو تیار ہو رہا ہے…",
+    playing: "چل رہا ہے…",
+    demoLabel: "مثال آڈیو (آف لائن)",
+    mic: "بول کر بتائیں",
+    recording: "ریکارڈنگ — روکنے کے لیے ٹیپ کریں",
+    transcribing: "لکھا جا رہا ہے…",
+    sttFailed: "آواز سمجھ نہیں آئی — براہ کرم ٹائپ کریں۔",
+  },
+  pl: {
+    title: "Opisz objaw",
+    subtitle:
+      "Opisz, jak się czujesz. Przygotujemy angielski skrypt, który pokażesz swojej położnej.",
+    placeholder: "np. mam lekki ból pleców",
+    submit: "Przygotuj mój skrypt",
+    loading: "Przygotowywanie…",
+    urgencyHeading: "Pilność",
+    scriptHeading: "Powiedz lub odtwórz to swojej położnej",
+    contactHeading: "Z kim się skontaktować",
+    sourceHeading: "Na podstawie",
+    privacy: "Twoje słowa nie są zapisywane.",
+    again: "Zacznij od nowa",
+    error: "Coś poszło nie tak. Spróbuj ponownie.",
+    genGlm: "Wygenerowane przez GLM-5.1",
+    genGemini: "Wygenerowane przez Gemini (zapasowo)",
+    offline: "Przykład (offline)",
+    play: "Odtwórz położnej",
+    preparingAudio: "Przygotowywanie audio…",
+    playing: "Odtwarzanie…",
+    demoLabel: "Przykładowe audio (offline)",
+    mic: "Powiedz zamiast pisać",
+    recording: "Nagrywanie — dotknij, aby zatrzymać",
+    transcribing: "Transkrypcja…",
+    sttFailed: "Nie udało się rozpoznać mowy — wpisz tekst.",
+  },
+} as const satisfies Record<Lang, Record<string, string>>;
 
 const URGENCY_STYLES: Record<
   GuidanceResponse["urgency"],
@@ -124,6 +201,7 @@ export default function ExpressFlow() {
   const chunksRef = useRef<Blob[]>([]);
 
   const t = UI[lang];
+  const dir = RTL_LANGS.includes(lang) ? "rtl" : undefined;
 
   useEffect(() => {
     setMicSupported(
@@ -243,40 +321,36 @@ export default function ExpressFlow() {
   }
 
   if (result?.kind === "emergency") {
-    return <EmergencyCard card={result.card} />;
+    return <EmergencyCard card={result.card} lang={lang} />;
   }
 
   return (
     <section className="w-full max-w-device space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-bold text-slate-900">{t.title}</h2>
-        <div className="flex overflow-hidden rounded-full border border-slate-300 text-sm">
-          <button
-            type="button"
-            onClick={() => setLang("en")}
-            className={`px-3 py-1 ${lang === "en" ? "bg-slate-900 text-white" : "text-slate-600"}`}
-            aria-pressed={lang === "en"}
-          >
-            EN
-          </button>
-          <button
-            type="button"
-            onClick={() => setLang("zh")}
-            className={`px-3 py-1 ${lang === "zh" ? "bg-slate-900 text-white" : "text-slate-600"}`}
-            aria-pressed={lang === "zh"}
-          >
-            中文
-          </button>
+        <h2 className="text-lg font-bold text-slate-900" dir={dir}>{t.title}</h2>
+        <div className="flex overflow-hidden rounded-full border border-slate-300 text-xs">
+          {LANGS.map((code) => (
+            <button
+              key={code}
+              type="button"
+              onClick={() => setLang(code)}
+              className={`px-2 py-1 ${lang === code ? "bg-slate-900 text-white" : "text-slate-600"}`}
+              aria-pressed={lang === code}
+            >
+              {LANG_LABELS[code]}
+            </button>
+          ))}
         </div>
       </div>
 
-      <p className="text-sm text-slate-600">{t.subtitle}</p>
+      <p className="text-sm text-slate-600" dir={dir}>{t.subtitle}</p>
 
       <form onSubmit={onSubmit} className="space-y-3">
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder={t.placeholder}
+          dir="auto"
           rows={3}
           className="w-full resize-none rounded-xl border border-slate-300 p-3 text-base text-slate-900 focus:border-slate-500 focus:outline-none"
         />
@@ -338,7 +412,7 @@ export default function ExpressFlow() {
             </span>
           </div>
 
-          <p className="whitespace-pre-line text-base leading-relaxed text-slate-900">
+          <p className="whitespace-pre-line text-base leading-relaxed text-slate-900" dir="auto">
             {result.explanation_native}
           </p>
 

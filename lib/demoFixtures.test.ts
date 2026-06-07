@@ -42,10 +42,13 @@ describe("demo fixtures (PRD §11.8)", () => {
     const parsed = ExpressEmergencySchema.safeParse(fixture);
     expect(parsed.success).toBe(true);
     const card = fixture.card as Record<string, unknown>;
-    expect(card.headline_en).toBeTruthy();
-    expect(card.headline_zh).toBeTruthy();
-    expect((card.primary as { tel?: string }).tel).toBe("tel:999");
-    expect((card.secondary as { tel?: string }).tel).toBe("tel:111");
+    expect((card.en as { headline?: string }).headline).toBeTruthy();
+    const native = card.native as Record<string, { headline?: string }>;
+    for (const lang of ["zh", "hi", "ur", "pl"]) {
+      expect(native[lang]?.headline).toBeTruthy();
+    }
+    expect(card.primary_tel).toBe("tel:999");
+    expect(card.secondary_tel).toBe("tel:111");
     expect(card.disclaimer).toBe(DISCLAIMER);
   });
 

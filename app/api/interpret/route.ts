@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { detectRedFlag } from "@/lib/urgencyGate";
+import { resolveLang, type Lang } from "@/lib/languages";
 import { buildEmergencyCard, DISCLAIMER } from "@/lib/emergencyCard";
 import { retrieveContext, type RetrievedChunk } from "@/lib/rag";
 import { generateJson } from "@/lib/generate";
@@ -15,14 +16,6 @@ import {
 } from "@/lib/schemas";
 
 export const runtime = "nodejs";
-
-type Lang = "zh" | "en";
-
-/** Cheap script heuristic — CJK present → zh (PRD §11.6). No model call. */
-function resolveLang(requested: unknown, text: string): Lang {
-  if (requested === "zh" || requested === "en") return requested;
-  return /[\u4e00-\u9fff]/.test(text) ? "zh" : "en";
-}
 
 /** User turn: letter text + retrieved sources, clearly delimited. User input is
  * never placed in the system prompt. */

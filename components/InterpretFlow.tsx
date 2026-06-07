@@ -3,8 +3,7 @@
 import { useRef, useState } from "react";
 import EmergencyCard from "@/components/EmergencyCard";
 import type { EmergencyCardData } from "@/lib/emergencyCard";
-
-type Lang = "zh" | "en";
+import { LANGS, LANG_LABELS, RTL_LANGS, type Lang } from "@/lib/languages";
 
 interface InterpretationResponse {
   kind: "interpretation";
@@ -90,7 +89,88 @@ const UI = {
     photoTypeInstead: "或在下方输入/粘贴信件内容。",
     photoPrivacy: "照片仅读取一次，不会被保存。",
   },
-} as const;
+  hi: {
+    title: "पत्र समझें",
+    subtitle:
+      "NHS का पत्र पेस्ट करें। हम उसे आसान भाषा में समझाएंगे और बताएंगे कि क्या पूछना है।",
+    placeholder: "यहां अपने NHS पत्र या रिपोर्ट का टेक्स्ट पेस्ट करें",
+    submit: "यह पत्र समझाएं",
+    loading: "पढ़ा जा रहा है…",
+    typeHeading: "दस्तावेज़",
+    explanationHeading: "इसका क्या मतलब है",
+    englishHeading: "अंग्रेज़ी में",
+    stepsHeading: "अगले कदम",
+    questionsHeading: "मिडवाइफ़ से पूछने के सवाल",
+    sourceHeading: "आधार",
+    privacy: "आपका पत्र सेव नहीं होता।",
+    again: "फिर से शुरू करें",
+    error: "कुछ गड़बड़ हुई। कृपया दोबारा कोशिश करें।",
+    genGlm: "GLM-5.1 द्वारा जनरेट किया गया",
+    genGemini: "Gemini द्वारा जनरेट किया गया (बैकअप)",
+    offline: "उदाहरण (ऑफ़लाइन)",
+    photo: "पत्र की फ़ोटो लें",
+    photoReading: "फ़ोटो पढ़ी जा रही है…",
+    photoConfirm:
+      "फ़ोटो से टेक्स्ट निकाला गया — कृपया जांच लें कि यह पत्र से मेल खाता है, फिर आगे बढ़ें।",
+    photoRetake: "फिर से फ़ोटो लें",
+    photoTypeInstead: "या नीचे पत्र टाइप/पेस्ट करें।",
+    photoPrivacy: "फ़ोटो एक बार पढ़ी जाती है और कभी सेव नहीं होती।",
+  },
+  ur: {
+    title: "خط سمجھیں",
+    subtitle:
+      "NHS کا خط پیسٹ کریں۔ ہم اسے آسان زبان میں سمجھائیں گے اور بتائیں گے کہ کیا پوچھنا ہے۔",
+    placeholder: "یہاں اپنے NHS خط یا رپورٹ کا متن پیسٹ کریں",
+    submit: "یہ خط سمجھائیں",
+    loading: "پڑھا جا رہا ہے…",
+    typeHeading: "دستاویز",
+    explanationHeading: "اس کا کیا مطلب ہے",
+    englishHeading: "انگریزی میں",
+    stepsHeading: "اگلے اقدامات",
+    questionsHeading: "مڈوائف سے پوچھنے کے سوالات",
+    sourceHeading: "ماخذ",
+    privacy: "آپ کا خط محفوظ نہیں ہوتا۔",
+    again: "دوبارہ شروع کریں",
+    error: "کچھ غلط ہوا۔ براہ کرم دوبارہ کوشش کریں۔",
+    genGlm: "GLM-5.1 سے تیار کردہ",
+    genGemini: "Gemini سے تیار کردہ (متبادل)",
+    offline: "مثال (آف لائن)",
+    photo: "خط کی تصویر لیں",
+    photoReading: "تصویر پڑھی جا رہی ہے…",
+    photoConfirm:
+      "تصویر سے متن نکالا گیا — براہ کرم چیک کریں کہ یہ خط سے ملتا ہے، پھر آگے بڑھیں۔",
+    photoRetake: "دوبارہ تصویر لیں",
+    photoTypeInstead: "یا نیچے خط ٹائپ/پیسٹ کریں۔",
+    photoPrivacy: "تصویر صرف ایک بار پڑھی جاتی ہے اور کبھی محفوظ نہیں ہوتی۔",
+  },
+  pl: {
+    title: "Wyjaśnij list",
+    subtitle:
+      "Wklej pismo z NHS. Wyjaśnimy je prostym językiem i podpowiemy, o co zapytać.",
+    placeholder: "Wklej tutaj treść listu lub wyniku z NHS",
+    submit: "Wyjaśnij ten list",
+    loading: "Czytanie…",
+    typeHeading: "Dokument",
+    explanationHeading: "Co to znaczy",
+    englishHeading: "Po angielsku",
+    stepsHeading: "Kolejne kroki",
+    questionsHeading: "Pytania do położnej",
+    sourceHeading: "Na podstawie",
+    privacy: "Twój list nie jest zapisywany.",
+    again: "Zacznij od nowa",
+    error: "Coś poszło nie tak. Spróbuj ponownie.",
+    genGlm: "Wygenerowane przez GLM-5.1",
+    genGemini: "Wygenerowane przez Gemini (zapasowo)",
+    offline: "Przykład (offline)",
+    photo: "Zrób zdjęcie listu",
+    photoReading: "Odczytywanie zdjęcia…",
+    photoConfirm:
+      "Tekst odczytany ze zdjęcia — sprawdź, czy zgadza się z listem, zanim przejdziesz dalej.",
+    photoRetake: "Zrób zdjęcie ponownie",
+    photoTypeInstead: "Albo wpisz/wklej list poniżej.",
+    photoPrivacy: "Zdjęcie jest odczytywane raz i nigdy nie jest zapisywane.",
+  },
+} as const satisfies Record<Lang, Record<string, string>>;
 
 /** Client-side cap, mirrors the route's ~8MB decoded limit. */
 const MAX_PHOTO_BYTES = 8 * 1024 * 1024;
@@ -107,6 +187,7 @@ export default function InterpretFlow() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const t = UI[lang];
+  const dir = RTL_LANGS.includes(lang) ? "rtl" : undefined;
 
   async function onPhotoChosen(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -187,34 +268,29 @@ export default function InterpretFlow() {
   }
 
   if (result?.kind === "emergency") {
-    return <EmergencyCard card={result.card} />;
+    return <EmergencyCard card={result.card} lang={lang} />;
   }
 
   return (
     <section className="w-full max-w-device space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-bold text-slate-900">{t.title}</h2>
-        <div className="flex overflow-hidden rounded-full border border-slate-300 text-sm">
-          <button
-            type="button"
-            onClick={() => setLang("en")}
-            className={`px-3 py-1 ${lang === "en" ? "bg-slate-900 text-white" : "text-slate-600"}`}
-            aria-pressed={lang === "en"}
-          >
-            EN
-          </button>
-          <button
-            type="button"
-            onClick={() => setLang("zh")}
-            className={`px-3 py-1 ${lang === "zh" ? "bg-slate-900 text-white" : "text-slate-600"}`}
-            aria-pressed={lang === "zh"}
-          >
-            中文
-          </button>
+        <h2 className="text-lg font-bold text-slate-900" dir={dir}>{t.title}</h2>
+        <div className="flex overflow-hidden rounded-full border border-slate-300 text-xs">
+          {LANGS.map((code) => (
+            <button
+              key={code}
+              type="button"
+              onClick={() => setLang(code)}
+              className={`px-2 py-1 ${lang === code ? "bg-slate-900 text-white" : "text-slate-600"}`}
+              aria-pressed={lang === code}
+            >
+              {LANG_LABELS[code]}
+            </button>
+          ))}
         </div>
       </div>
 
-      <p className="text-sm text-slate-600">{t.subtitle}</p>
+      <p className="text-sm text-slate-600" dir={dir}>{t.subtitle}</p>
 
       <form onSubmit={onSubmit} className="space-y-3">
         <input
@@ -262,6 +338,7 @@ export default function InterpretFlow() {
             setOcrConfirm(false);
           }}
           placeholder={t.placeholder}
+          dir="auto"
           rows={5}
           className="w-full resize-none rounded-xl border border-slate-300 p-3 text-base text-slate-900 focus:border-slate-500 focus:outline-none"
         />
@@ -297,7 +374,7 @@ export default function InterpretFlow() {
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
               {t.explanationHeading}
             </p>
-            <p className="mt-1 whitespace-pre-line text-base leading-relaxed text-slate-900">
+            <p className="mt-1 whitespace-pre-line text-base leading-relaxed text-slate-900" dir="auto">
               {result.explanation_native}
             </p>
           </div>

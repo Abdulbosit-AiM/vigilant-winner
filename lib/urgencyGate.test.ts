@@ -26,6 +26,46 @@ describe("detectRedFlag", () => {
     expect(detectRedFlag("我有严重头痛").hit).toBe(true);
   });
 
+  it("flags reduced fetal movement (Hindi बच्चा हिल नहीं रहा)", () => {
+    expect(detectRedFlag("मेरा बच्चा हिल नहीं रहा है").hit).toBe(true);
+  });
+
+  it("flags severe headache (Hindi तेज़ सिरदर्द)", () => {
+    expect(detectRedFlag("मुझे तेज़ सिरदर्द है").hit).toBe(true);
+  });
+
+  it("flags reduced fetal movement (Urdu بچہ حرکت نہیں کر رہا)", () => {
+    expect(detectRedFlag("میرا بچہ حرکت نہیں کر رہا").hit).toBe(true);
+  });
+
+  it("flags severe headache (Urdu شدید سر درد)", () => {
+    expect(detectRedFlag("مجھے شدید سر درد ہے").hit).toBe(true);
+  });
+
+  it("flags reduced fetal movement (Polish dziecko się nie rusza)", () => {
+    expect(detectRedFlag("moje dziecko się nie rusza").hit).toBe(true);
+  });
+
+  it("flags waters breaking (Polish odeszły wody)", () => {
+    expect(detectRedFlag("chyba odeszły wody").hit).toBe(true);
+  });
+
+  it("flags Polish typed without diacritics (silny bol glowy)", () => {
+    expect(detectRedFlag("mam silny bol glowy").hit).toBe(true);
+  });
+
+  it("does not flag benign Hindi text", () => {
+    expect(detectRedFlag("मुझे हल्का कमर दर्द है").hit).toBe(false);
+  });
+
+  it("does not flag benign Urdu text", () => {
+    expect(detectRedFlag("مجھے ہلکا کمر درد ہے").hit).toBe(false);
+  });
+
+  it("does not flag benign Polish text", () => {
+    expect(detectRedFlag("mam lekki ból pleców").hit).toBe(false);
+  });
+
   it("is case-insensitive for English terms", () => {
     expect(detectRedFlag("I have CHEST PAIN right now").hit).toBe(true);
   });

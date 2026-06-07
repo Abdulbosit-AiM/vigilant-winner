@@ -33,8 +33,11 @@ disparity. (Stats to re-verify before pitch — `docs/pathways/4-maternity.md` �
 **Product promise / one-line pitch:** "ChatGPT gives information. **Maternify gives
 her a voice.**"
 **Target user (one):** **Maya** — 26–38, pregnant or postpartum, born outside the
-UK, living in England. Mother tongue Mandarin (Simplified) for the hackathon build;
-functional everyday English but not confident in clinical settings under pressure.
+UK, living in England. Mother tongue Mandarin (Simplified) for the hackathon build —
+the demo persona; the shipped build also covers **Hindi, Urdu and Polish** (UI
+strings, red-flag lists, emergency-card copy — translations pending native-speaker
+verification). Functional everyday English but not confident in clinical settings
+under pressure.
 She leaves appointments not understanding what was said, receives NHS letters she
 cannot decode, and can't describe symptoms accurately in English when something
 feels wrong.
@@ -160,10 +163,11 @@ in-scope table + acceptance criteria; `docs/health/SAFETY-GUARDRAILS.md` has the
 hardcoded rules). Build these two flows and **nothing else** for the hackathon.
 
 **Flow A — Express** (symptom → English script + TTS):
-1. User inputs a symptom in Mandarin or English — typed, or spoken via the mic
-   (Gemini STT, bonus tier; degrades to "type instead").
+1. User inputs a symptom in Mandarin, Hindi, Urdu, Polish or English — typed, or
+   spoken via the mic (Gemini STT, bonus tier; degrades to "type instead").
 2. **Red-flag gate runs first** — a pure synchronous function over a hardcoded
-   keyword list (EN + Mandarin). On a red-flag it **bypasses all LLM generation**
+   keyword list (all supported languages, every list checked on every input,
+   `lib/redFlags.ts`). On a red-flag it **bypasses all LLM generation**
    and shows the static emergency card (999 / 111, one-tap call). < 500ms.
 3. Non-urgent → RAG retrieval (top chunks) → GLM generation (Gemini fallback) → a **Zod-validated**
    structured output: urgency level (Immediate / Today / Next appointment) +
