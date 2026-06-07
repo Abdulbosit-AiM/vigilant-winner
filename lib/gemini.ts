@@ -199,6 +199,51 @@ export async function geminiTranscribe(opts: {
   }
 }
 
+/* ---------------------------------- OCR ----------------------------------- */
+
+/**
+ * OCR via vision generateContent (inline image base64). Used by /api/ocr to
+ * extract NHS-letter text for the Interpret flow. The image is processed
+ * in-memory only — callers must never log or persist it.
+ */
+export async function geminiOcr(opts: {
+  imageBase64: string;
+  mimeType: string;
+}): Promise<GeminiTextResult> {
+  if (!live.gemini()) {
+    return { text: "[mock:gemini-ocr] extraction unavailable in mock mode", mocked: true };
+  }
+  try {
+    const json = await postJson(url(env.gemini.textModel, "generateContent"), {
+      contents: [
+        {
+          role: "user",
+          parts: [
+            {
+              text:
+                "Extract ALL text from this photographed document exactly as written. " +
+                "Preserve line breaks. Return only the extracted text — no commentary, " +
+                "no translation, no summary. If the image contains no readable text, " +
+                "return an empty response.",
+            },
+            { inlineData: { mimeType: opts.mimeType, data: opts.imageBase64 } },
+          ],
+        },
+      ],
+      // Plain extraction — no thinking needed, keeps latency low.
+      generationConfig: { thinkingConfig: { thinkingBudget: 0 } },
+    });
+    const text =
+      json?.candidates?.[0]?.content?.parts
+        ?.map((p: { text?: string }) => p.text ?? "")
+        .join("") ?? "";
+    return { text, mocked: false };
+  } catch (err) {
+    const reason = err instanceof Error ? err.message : "unknown";
+    return { text: `[mock:gemini-ocr] live failed (${reason})`, mocked: true };
+  }
+}
+
 /** Health probe: synthesizes a short full sentence (single words confuse TTS). */
 export async function geminiHealth(): Promise<{ ok: boolean; mocked: boolean; bytes: number }> {
   const r = await geminiTts({ text: "Health check passed." });

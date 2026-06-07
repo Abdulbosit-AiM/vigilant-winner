@@ -170,6 +170,22 @@ Risk for next block: `data/corpus/index.json` (44 real-vector chunks) and `publi
 
 ---
 
+### Block 7b — OCR (M5) + stack-doc reconcile · COMPLETE
+Built:
+- **Stack-doc reconcile (own commit, 4c981db):** 16 docs/config files reconciled from the pre-build Claude/OpenAI/no-DB cut to the shipped GLM/Gemini/Supabase stack — `.env.example` (GLM_API_KEY/GEMINI_API_KEY/SUPABASE_*/DEMO_SAFE_MODE; NHS key removed), `docs/TECH-STACK.md` (full rewrite incl. quota note + measured latencies), `CLAUDE.md` §5–§8 + repo map, README, TOOLS, SETUP, AGENTS, BUILD-CHECKLIST, RAG-CORPUS, COMPLIANCE, SAFETY-GUARDRAILS §0/§5, 4-maternity (STT/OCR → in-scope bonus tier), `.cursor/rules/01+03` (stack block, file structure, TTS-base64 rule, model guidance), and the superseded TTS-streaming decision above.
+- `lib/ocr.ts` — `assessOcrText(raw)`: deterministic extraction-quality gate (normalise whitespace; reject `[mock:` prefixed, empty, or <20 *meaningful* chars counted via `\p{L}\p{N}` so punctuation noise fails but CJK passes). No model call.
+- `lib/gemini.ts` — `geminiOcr({imageBase64, mimeType})`: vision `generateContent` with an extract-only instruction (preserve line breaks, no commentary/translation), `thinkingBudget:0`, labelled mock fallback.
+- `app/api/ocr/route.ts` (`runtime="nodejs"`) — rateLimit → validate (400 no image / 400 mime not in jpeg/png/webp/heic/heif allowlist / 413 >~8MB decoded) → `geminiOcr` → mocked→503 ("type instead"), `assessOcrText` fail→422 `unreadable:true` → else `{text}` for USER CONFIRMATION. Route never calls Interpret itself (PRD §11.7); image processed in-memory, never logged/persisted.
+- `components/InterpretFlow.tsx` (additive) — 📷 "Photograph the letter" button (hidden `<input type="file" accept="image/*" capture="environment">`), client-side type/size guard, FileReader→base64, POST `/api/ocr`; success → extracted text lands in the textarea + blue "check it matches the letter" confirm notice (editing clears it); failure → amber card with the server's message + **Retake photo** + "Or type/paste instead"; "photo read once, never stored" privacy line. Bilingual EN/中文 strings. M0–M6 behaviour untouched.
+- Tests: `lib/ocr.test.ts` (7 cases: realistic letter, CJK, empty, too-short, punctuation noise, mock prefix, boundary). Suite 49 → **56 passing**.
+Worked: full live verification on dev server — letter-photo PNG (generated via `qlmanage -t` thumbnail of a screening-letter txt) → **HTTP 200 in 1.4s with byte-perfect extraction incl. line breaks**; extracted text → `/api/interpret` returned a live, correctly-framed interpretation (screening-not-diagnosis, 1-in-85 explained in Mandarin); red-flag text ("severe headache and blurry vision") → emergency card via the gate; 1×1 px PNG → 422 unreadable (proving Gemini vision is LIVE today — quota reset); no-image→400, bad-mime→400, rate limit →429 after window. Server log grep: **0 occurrences** of image bytes or letter content. typecheck + lint + build + 56 tests green.
+Struggled: nothing material. `qlmanage -t` is a handy zero-dependency way to render text into a test PNG on macOS.
+Learned: count *meaningful* characters (`\p{L}\p{N}` unicode classes) not raw length when gating OCR output — punctuation-noise pages fail, CJK letters pass with the same rule. Return 422 (user-fixable: retake) vs 503 (system: quota/offline) so the UI can phrase the fallback honestly.
+Deviated: none from BUILD-PLAN M5. The "show extracted text for confirmation" requirement is implemented as: extraction always lands in the editable textarea + confirm notice, user must press "Explain this letter" themselves — confirmation is structural, not a separate modal.
+Risk for next block (demo prep): `/api/ocr` shares the gemini-2.5-flash daily quota with Express/Interpret/STT — an OCR demo moment burns generation quota; in DEMO_SAFE_MODE the OCR button degrades to 503→"type instead" (no OCR fixture exists), so the demo script should use the **paste** path for Interpret unless quota is confirmed fresh. Supabase `events`/`corpus` tables still absent (handled, non-fatal). Demo assets (`data/corpus/index.json`, `public/demo/express-script.wav`) ARE committed — verified in git.
+
+---
+
 ### Block 8 — UI · PENDING
 Built: —
 Worked: —
