@@ -12,7 +12,9 @@ export default function LanguageSwitcher({
   compact?: boolean;
 }) {
   const { lang, setLang } = useLang();
-  const pad = compact ? "px-2 py-1 text-[11px]" : "px-3 py-1.5 text-xs";
+  const pad = compact
+    ? "px-1.5 py-0.5 text-[10px] leading-tight"
+    : "px-3 py-1.5 text-xs";
   return (
     <div
       className={`inline-flex overflow-hidden rounded-full border border-border bg-card font-semibold ${className}`}

@@ -188,7 +188,7 @@ const en: Dict = {
   "culture.whatThis": "What this feature does",
   "culture.whatThisBody":
     "Before generating an English script, Maternify identifies idiomatic or metaphorical expressions and resolves them to their clinical referents — so a phrase like “stomach feels tight in waves” becomes “uterine contractions”. It also calibrates communication style so the script is direct and clear for NHS clinical culture, without sounding demanding.",
-  "culture.examplesLabel": "Common Mandarin expressions",
+  "culture.examplesLabel": "Common expressions",
   "culture.examplesHint":
     "Tap a phrase to resolve it to its clinical referent, or type your own below.",
   "culture.customPlaceholder": "Type an expression in your own words…",
@@ -383,7 +383,7 @@ const zh: Dict = {
   "culture.whatThis": "此功能的作用",
   "culture.whatThisBody":
     "在生成英文台词之前，Maternify 会识别习语或比喻性表达，并将其解析为临床术语——例如“肚子发紧，一阵一阵的”会被解析为“子宫收缩”。它还会校准沟通风格，使台词直接清晰，符合 NHS 临床文化，又不显得强硬。",
-  "culture.examplesLabel": "常见中文表达",
+  "culture.examplesLabel": "常见表达",
   "culture.examplesHint": "点击一个表达将其解析为临床术语，或在下方输入您自己的表达。",
   "culture.customPlaceholder": "用您自己的话输入一个表达…",
   "culture.resolve": "解析为临床术语",
@@ -583,7 +583,7 @@ const hi: Dict = {
   "culture.whatThis": "यह सुविधा क्या करती है",
   "culture.whatThisBody":
     "अंग्रेज़ी स्क्रिप्ट बनाने से पहले, Maternify मुहावरेदार या रूपक अभिव्यक्तियों को पहचानता है और उन्हें उनके नैदानिक अर्थ में बदलता है — जैसे “पेट लहरों में कसता है” बन जाता है “गर्भाशय संकुचन”। यह संवाद शैली को भी समायोजित करता है ताकि स्क्रिप्ट NHS की नैदानिक संस्कृति के लिए सीधी और स्पष्ट हो, बिना मांग जैसी लगे।",
-  "culture.examplesLabel": "आम मंदारिन अभिव्यक्तियाँ",
+  "culture.examplesLabel": "आम अभिव्यक्तियाँ",
   "culture.examplesHint":
     "किसी वाक्यांश पर टैप करके उसे नैदानिक शब्दों में बदलें, या नीचे अपने शब्द लिखें।",
   "culture.customPlaceholder": "अपने शब्दों में एक अभिव्यक्ति लिखें…",
@@ -786,7 +786,7 @@ const ur: Dict = {
   "culture.whatThis": "یہ خصوصیت کیا کرتی ہے",
   "culture.whatThisBody":
     "انگریزی اسکرپٹ بنانے سے پہلے، Maternify محاوراتی یا استعاراتی جملوں کو پہچانتا ہے اور انہیں ان کے طبی مفہوم میں بدلتا ہے — جیسے “پیٹ لہروں میں سخت ہوتا ہے” بن جاتا ہے “رحم کے سکڑاؤ”۔ یہ رابطے کے انداز کو بھی ترتیب دیتا ہے تاکہ اسکرپٹ NHS کی طبی ثقافت کے لیے براہِ راست اور واضح ہو، بغیر مطالبہ کرنے جیسی لگے۔",
-  "culture.examplesLabel": "عام مینڈارن (چینی) جملے",
+  "culture.examplesLabel": "عام جملے",
   "culture.examplesHint":
     "کسی جملے کو اس کے طبی مفہوم میں بدلنے کے لیے اس پر ٹیپ کریں، یا نیچے اپنا لکھیں۔",
   "culture.customPlaceholder": "اپنے الفاظ میں کوئی جملہ لکھیں…",
@@ -990,7 +990,7 @@ const pl: Dict = {
   "culture.whatThis": "Co robi ta funkcja",
   "culture.whatThisBody":
     "Przed wygenerowaniem angielskiego skryptu Maternify rozpoznaje wyrażenia idiomatyczne lub metaforyczne i przekłada je na odpowiedniki kliniczne — na przykład „brzuch napina się falami” staje się „skurczami macicy”. Dostosowuje też styl komunikacji, aby skrypt był bezpośredni i jasny dla kultury klinicznej NHS, nie brzmiąc przy tym roszczeniowo.",
-  "culture.examplesLabel": "Typowe wyrażenia mandaryńskie",
+  "culture.examplesLabel": "Typowe wyrażenia",
   "culture.examplesHint":
     "Dotknij frazę, aby przełożyć ją na odpowiednik kliniczny, lub wpisz własną poniżej.",
   "culture.customPlaceholder": "Wpisz wyrażenie własnymi słowami…",

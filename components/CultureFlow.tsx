@@ -32,6 +32,7 @@ function fromSample(s: IdiomSample): Resolution {
 
 export default function CultureFlow() {
   const { lang, t } = useLang();
+  const samples = IDIOM_SAMPLES[lang] ?? IDIOM_SAMPLES.en;
 
   const [input, setInput] = useState("");
   const [result, setResult] = useState<Resolution | null>(null);
@@ -119,7 +120,7 @@ export default function CultureFlow() {
         <p className="mb-3 text-xs text-muted-foreground">{t("culture.examplesHint")}</p>
 
         <div className="mb-4 flex flex-col gap-2">
-          {IDIOM_SAMPLES.map((ex) => (
+          {samples.map((ex) => (
             <button
               key={ex.id}
               type="button"
