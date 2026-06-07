@@ -14,7 +14,10 @@ const DESKTOP_MIN_WIDTH = 768;
 /** Brand + global language switcher — fixed at the top of the app chrome. */
 function TopBar() {
   return (
-    <header className="flex shrink-0 items-center justify-between gap-2 border-b border-border bg-card/90 px-4 py-2 backdrop-blur">
+    <header
+      dir="ltr"
+      className="flex shrink-0 items-center justify-between gap-2 border-b border-border bg-card/90 px-4 py-2 backdrop-blur"
+    >
       <div className="flex items-center gap-2">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/favicon.webp" alt="" className="h-6 w-6" />
@@ -116,8 +119,10 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="fixed inset-0 grid place-items-center overflow-hidden bg-gradient-to-b from-slate-200 to-slate-300">
       <ViewToggle view="simulator" onToggle={toggle} />
-      <div className="relative aspect-[9/19.5] h-[min(900px,calc(100dvh_-_1.5rem))] shrink-0 rounded-[2.8rem] border-[10px] border-slate-900 bg-slate-900 shadow-2xl">
-        <div className="h-full w-full overflow-hidden rounded-[2.1rem]">
+      <div className="relative aspect-[9/19.5] h-[min(900px,calc(100dvh_-_1.5rem))] min-h-0 shrink-0 rounded-[2.8rem] border-[10px] border-slate-900 bg-slate-900 shadow-2xl">
+        {/* Screen is absolutely positioned so tall content (Log/Patterns) scrolls
+            INSIDE the frame and can never expand the phone's fixed size. */}
+        <div className="absolute inset-0 overflow-hidden rounded-[2.1rem] bg-background">
           <Chrome notch>{children}</Chrome>
         </div>
       </div>
