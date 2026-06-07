@@ -3,11 +3,13 @@
 import { useState } from "react";
 import ExpressFlow from "@/components/ExpressFlow";
 import InterpretFlow from "@/components/InterpretFlow";
+import PrivacyModal from "@/components/PrivacyModal";
 
 type Flow = "express" | "interpret";
 
 export default function Home() {
   const [flow, setFlow] = useState<Flow>("express");
+  const [privacyOpen, setPrivacyOpen] = useState(false);
 
   return (
     <main className="mx-auto flex min-h-screen max-w-device flex-col items-center gap-6 px-5 py-10">
@@ -40,8 +42,17 @@ export default function Home() {
       {flow === "express" ? <ExpressFlow /> : <InterpretFlow />}
 
       <footer className="mt-auto pt-6 text-center text-[11px] text-slate-400">
-        Not a professional interpreter service. In an emergency, call 999.
+        Not a professional interpreter service. In an emergency, call 999.{" "}
+        <button
+          type="button"
+          onClick={() => setPrivacyOpen(true)}
+          className="underline underline-offset-2 hover:text-slate-600"
+        >
+          Privacy &amp; data
+        </button>
       </footer>
+
+      {privacyOpen && <PrivacyModal onClose={() => setPrivacyOpen(false)} />}
     </main>
   );
 }
