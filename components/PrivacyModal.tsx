@@ -48,8 +48,9 @@ export default function PrivacyModal({ onClose }: Props) {
           <li className="flex gap-2">
             <span aria-hidden="true" className="mt-0.5 shrink-0 text-green-600">✓</span>
             <span>
-              <strong>No personal data is stored.</strong> Your inputs are
-              processed by AI and not retained after the response is shown.
+              <strong>Your data stays on your device.</strong> Voice and
+              interpreter features send your text to an AI in the cloud to
+              generate a response — nothing is saved or linked to you afterwards.
             </span>
           </li>
           <li className="flex gap-2">
