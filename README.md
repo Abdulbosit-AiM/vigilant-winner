@@ -47,5 +47,12 @@ substitute for a midwife, doctor, or maternity triage, and **not a professional
 interpreter service**. **In an emergency, call 999. For urgent pregnancy concerns,
 contact your maternity unit or call 111.**
 
+## Contributing
+
+Small, focused pull requests are welcome (docs, copy, tests). Please keep changes
+scoped — avoid drive-by refactors. For app behaviour or safety logic, read
+[`CLAUDE.md`](CLAUDE.md) and [`docs/health/SAFETY-GUARDRAILS.md`](docs/health/SAFETY-GUARDRAILS.md)
+first. Open a PR against `main`; one reviewer from the team will merge.
+
 ---
 *Repo: https://github.com/Abdulbosit-AiM/vigilant-winner*
