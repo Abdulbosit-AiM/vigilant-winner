@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import DeviceFrame from "@/components/DeviceFrame";
+import { LangProvider } from "@/components/LangProvider";
+import BottomTabBar from "@/components/BottomTabBar";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "Maternify",
@@ -21,8 +23,26 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="min-h-screen text-slate-900">
-        <DeviceFrame>{children}</DeviceFrame>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Noto+Sans+SC:wght@400;500;700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body className="bg-background text-foreground">
+        <LangProvider>
+          <div className="relative mx-auto min-h-screen max-w-[430px] bg-background">
+            <main className="pb-20">{children}</main>
+            <BottomTabBar />
+          </div>
+          <Toaster position="top-center" richColors />
+        </LangProvider>
       </body>
     </html>
   );

@@ -43,7 +43,7 @@ export async function readCorpus(): Promise<CorpusRow[]> {
 
 export interface EventRow {
   /** kept deliberately tiny + non-identifying */
-  kind: "express" | "interpret" | "tts" | "stt" | "ocr";
+  kind: "express" | "interpret" | "tts" | "stt" | "ocr" | "culture";
   urgency?: string;
   lang?: string;
   red_flag?: boolean;

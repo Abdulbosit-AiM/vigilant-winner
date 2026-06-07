@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useT } from "@/components/LangProvider";
 
 interface Props {
   onClose: () => void;
@@ -8,6 +9,7 @@ interface Props {
 
 export default function PrivacyModal({ onClose }: Props) {
   const dialogRef = useRef<HTMLDivElement>(null);
+  const t = useT();
 
   useEffect(() => {
     const prev = document.activeElement as HTMLElement | null;
@@ -23,11 +25,33 @@ export default function PrivacyModal({ onClose }: Props) {
     return () => document.removeEventListener("keydown", onKey);
   }, [onClose]);
 
+  const points: { tone: "ok" | "warn"; title: string; body: string }[] = [
+    { tone: "ok", title: t("privacy.local"), body: t("privacy.localBody") },
+    { tone: "ok", title: t("privacy.cloud"), body: t("privacy.cloudBody") },
+    {
+      tone: "ok",
+      title: t("privacy.noAccount"),
+      body: t("privacy.noAccountBody"),
+    },
+    {
+      tone: "warn",
+      title: t("privacy.notInterpreter"),
+      body: t("privacy.notInterpreterBody"),
+    },
+    {
+      tone: "warn",
+      title: t("privacy.notMedical"),
+      body: t("privacy.notMedicalBody"),
+    },
+  ];
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 px-4 pb-6"
       role="presentation"
-      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
     >
       <div
         ref={dialogRef}
@@ -35,61 +59,37 @@ export default function PrivacyModal({ onClose }: Props) {
         aria-modal="true"
         aria-labelledby="privacy-modal-title"
         tabIndex={-1}
-        className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl outline-none"
+        className="mat-card w-full max-w-sm p-6 outline-none"
       >
         <h2
           id="privacy-modal-title"
-          className="mb-4 text-base font-semibold text-slate-900"
+          className="mb-4 text-base font-semibold text-foreground"
         >
-          Privacy &amp; Data
+          {t("privacy.title")}
         </h2>
 
-        <ul className="space-y-3 text-sm text-slate-700">
-          <li className="flex gap-2">
-            <span aria-hidden="true" className="mt-0.5 shrink-0 text-green-600">✓</span>
-            <span>
-              <strong>Your data stays on your device.</strong> Voice and
-              interpreter features send your text to an AI in the cloud to
-              generate a response — nothing is saved or linked to you afterwards.
-            </span>
-          </li>
-          <li className="flex gap-2">
-            <span aria-hidden="true" className="mt-0.5 shrink-0 text-green-600">✓</span>
-            <span>
-              <strong>No account or login required.</strong> Nothing is linked
-              to you personally.
-            </span>
-          </li>
-          <li className="flex gap-2">
-            <span aria-hidden="true" className="mt-0.5 shrink-0 text-amber-500">!</span>
-            <span>
-              <strong>Not a professional interpreter service.</strong> This tool
-              supports communication — it does not replace a qualified NHS
-              interpreter.
-            </span>
-          </li>
-          <li className="flex gap-2">
-            <span aria-hidden="true" className="mt-0.5 shrink-0 text-amber-500">!</span>
-            <span>
-              <strong>Not medical advice.</strong> Always confirm with your
-              midwife or doctor. In an emergency, call{" "}
-              <a
-                href="tel:999"
-                className="font-semibold text-red-600 underline"
+        <ul className="space-y-3 text-sm text-foreground">
+          {points.map((p, i) => (
+            <li key={i} className="flex gap-2">
+              <span
+                aria-hidden="true"
+                className={`mt-0.5 shrink-0 ${p.tone === "ok" ? "text-teal-600" : "text-amber-500"}`}
               >
-                999
-              </a>
-              .
-            </span>
-          </li>
+                {p.tone === "ok" ? "✓" : "!"}
+              </span>
+              <span>
+                <strong>{p.title}</strong> {p.body}
+              </span>
+            </li>
+          ))}
         </ul>
 
         <button
           type="button"
           onClick={onClose}
-          className="mt-6 w-full rounded-full bg-slate-900 py-3 text-sm font-semibold text-white"
+          className="mt-6 w-full rounded-full bg-teal-600 py-3 text-sm font-semibold text-white active:scale-95"
         >
-          Close
+          {t("common.close")}
         </button>
       </div>
     </div>
