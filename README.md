@@ -1,4 +1,4 @@
-# vigilant-winner · **Maternify**
+# **Maternify**
 
 [![Live demo](https://img.shields.io/badge/Live%20demo-maternify--theta.vercel.app-2f855a?logo=vercel&logoColor=white)](https://maternify-theta.vercel.app)
 
@@ -66,4 +66,4 @@ scoped — avoid drive-by refactors. For app behaviour or safety logic, read
 first. Open a PR against `main`; one reviewer from the team will merge.
 
 ---
-*Repo: https://github.com/Abdulbosit-AiM/vigilant-winner*
+*Repo: https://github.com/abtv-uk/maternify*
