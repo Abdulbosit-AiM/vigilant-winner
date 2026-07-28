@@ -66,4 +66,4 @@ scoped — avoid drive-by refactors. For app behaviour or safety logic, read
 first. Open a PR against `main`; one reviewer from the team will merge.
 
 ---
-*Repo: https://github.com/Abdulbosit-AiM/vigilant-winner*
+*Repo: https://github.com/abtv-uk/maternify*
