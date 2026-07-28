@@ -53,6 +53,11 @@ substitute for a midwife, doctor, or maternity triage, and **not a professional
 interpreter service**. **In an emergency, call 999. For urgent pregnancy concerns,
 contact your maternity unit or call 111.**
 
+## Contributors
+
+- **[Felix You](https://github.com/FelixY28)** — UI/UX
+- **[Syed Zarak Hassan](https://github.com/syed-hassan7)** — Security & privacy
+
 ## Contributing
 
 Small, focused pull requests are welcome (docs, copy, tests). Please keep changes
