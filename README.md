@@ -1,5 +1,7 @@
 # vigilant-winner · **Maternify**
 
+[![Live demo](https://img.shields.io/badge/Live%20demo-maternify--theta.vercel.app-2f855a?logo=vercel&logoColor=white)](https://maternify-theta.vercel.app)
+
 Submission for **VibeHack London 2026** · Track: **Health Impact** (sponsor: Cursor).
 
 **Safer Maternity Care** — a multilingual communication tool for minority-ethnic
@@ -17,6 +19,10 @@ explanation, next steps, and the questions to ask. Not translation, not diagnosi
 **a voice.** MBRRACE-UK found 96% of reviewed maternal-death cases had a documented
 interpreter need and only 27% had one; Black women are ~2.3–3× more likely to die
 in pregnancy/childbirth than White women. Communication failure costs lives.
+
+<p align="center">
+  <img src="public/screenshots/express-flow.png" alt="Maternify Express flow — symptom entry screen" width="360">
+</p>
 
 ## Start here
 - **[`CLAUDE.md`](CLAUDE.md)** — the operating contract. Read first.
@@ -46,6 +52,11 @@ This project provides **support and information, not medical advice**, and is no
 substitute for a midwife, doctor, or maternity triage, and **not a professional
 interpreter service**. **In an emergency, call 999. For urgent pregnancy concerns,
 contact your maternity unit or call 111.**
+
+## Contributors
+
+- **[Felix You](https://github.com/FelixY28)** — UI/UX
+- **[Syed Zarak Hassan](https://github.com/syed-hassan7)** — Security & privacy
 
 ## Contributing
 
