@@ -1,4 +1,4 @@
-# vigilant-winner · **Maternify**
+# **Maternify**
 
 [![Live demo](https://img.shields.io/badge/Live%20demo-maternify--theta.vercel.app-2f855a?logo=vercel&logoColor=white)](https://maternify-theta.vercel.app)
 
